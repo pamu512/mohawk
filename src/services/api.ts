@@ -169,6 +169,46 @@ export interface PersistedCourse {
   card_ids: string[];
 }
 
+export interface ExtractedNode {
+  id: string;
+  entity_type: string;
+  title: string;
+  description: string;
+}
+
+export interface ExtractedEdge {
+  source_node_id: string;
+  target_node_id: string;
+  relationship_type: string;
+}
+
+export interface ExtractedCard {
+  card_type: string;
+  question: string;
+  answer: string;
+  payload_mock: Record<string, unknown>;
+}
+
+export interface CourseExtraction {
+  course_title: string;
+  category: string;
+  new_nodes: ExtractedNode[];
+  new_edges: ExtractedEdge[];
+  new_cards: ExtractedCard[];
+}
+
+export interface PendingCourseDetail {
+  summary: PendingCourseSummary;
+  course: CourseExtraction;
+}
+
+export type ExportFormat = 'csv' | 'anki_tsv';
+
+export interface ExportResult {
+  filename: string;
+  content: string;
+}
+
 // ==========================================
 // Core API Invocation Layer
 // ==========================================
@@ -309,6 +349,44 @@ export const ApiService = {
       await invoke<void>("reject_pending_course", { pending_id: pendingId });
     } catch (error) {
       console.error("Reject pending course failed:", error);
+      throw error;
+    }
+  },
+
+  async getPendingCourseDetail(pendingId: string): Promise<PendingCourseDetail> {
+    try {
+      return await invoke<PendingCourseDetail>("get_pending_course_detail", {
+        pending_id: pendingId,
+      });
+    } catch (error) {
+      console.error("Failed to load pending course detail:", error);
+      throw error;
+    }
+  },
+
+  async getInferenceSettings(): Promise<LocalInferenceConfig> {
+    try {
+      return await invoke<LocalInferenceConfig>("get_inference_settings");
+    } catch (error) {
+      console.error("Failed to load inference settings:", error);
+      throw error;
+    }
+  },
+
+  async updateInferenceSettings(settings: LocalInferenceConfig): Promise<void> {
+    try {
+      await invoke<void>("update_inference_settings", { settings });
+    } catch (error) {
+      console.error("Failed to save inference settings:", error);
+      throw error;
+    }
+  },
+
+  async exportStudyCards(format: ExportFormat): Promise<ExportResult> {
+    try {
+      return await invoke<ExportResult>("export_study_cards", { format });
+    } catch (error) {
+      console.error("Export failed:", error);
       throw error;
     }
   },

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type FC } from 'react';
-import { ApiService, Card } from '../services/api';
+import { ApiService, Card, type ExportFormat } from '../services/api';
+import { downloadTextFile } from '../lib/formatCountdown';
 import { matchesStudyTrack, type StudyTrack } from '../lib/studyTracks';
 import { StudyTrackFilter } from './StudyTrackFilter';
 import { TechnicalLabConsole } from './TechnicalLabConsole';
@@ -7,13 +8,54 @@ import { TechnicalLabConsole } from './TechnicalLabConsole';
 type CircuitState = 'LOADING' | 'IDLE' | 'TRIAGE' | 'REVEALED';
 
 interface StudyCircuitProps {
-  initialTrack?: StudyTrack;
+  track?: StudyTrack;
 }
 
-export const StudyCircuit: FC<StudyCircuitProps> = ({ initialTrack = 'ALL' }) => {
+const ExportBar: FC = () => {
+  const [exporting, setExporting] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
+
+  const runExport = async (format: ExportFormat) => {
+    setExporting(true);
+    setExportError(null);
+    try {
+      const result = await ApiService.exportStudyCards(format);
+      downloadTextFile(result.filename, result.content);
+    } catch (err) {
+      setExportError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  return (
+    <div className="flex flex-wrap items-center gap-2 border-b border-slate-900 px-4 py-2 text-[10px]">
+      <span className="text-slate-600">EXPORT:</span>
+      <button
+        type="button"
+        disabled={exporting}
+        onClick={() => runExport('csv')}
+        className="rounded border border-slate-700 px-2 py-1 text-slate-400 hover:bg-slate-900 disabled:opacity-40"
+      >
+        CSV
+      </button>
+      <button
+        type="button"
+        disabled={exporting}
+        onClick={() => runExport('anki_tsv')}
+        className="rounded border border-slate-700 px-2 py-1 text-slate-400 hover:bg-slate-900 disabled:opacity-40"
+      >
+        ANKI TSV
+      </button>
+      {exportError && <span className="text-rose-400">{exportError}</span>}
+    </div>
+  );
+};
+
+export const StudyCircuit: FC<StudyCircuitProps> = ({ track = 'ALL' }) => {
   const [viewState, setViewState] = useState<CircuitState>('LOADING');
   const [allCards, setAllCards] = useState<Card[]>([]);
-  const [activeTrack, setActiveTrack] = useState<StudyTrack>(initialTrack);
+  const [activeTrack, setActiveTrack] = useState<StudyTrack>(track);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [timeLeft, setTimeLeft] = useState(15);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -38,6 +80,10 @@ export const StudyCircuit: FC<StudyCircuitProps> = ({ initialTrack = 'ALL' }) =>
       setViewState('IDLE');
     }
   }, []);
+
+  useEffect(() => {
+    setActiveTrack(track);
+  }, [track]);
 
   useEffect(() => {
     loadQueue();
@@ -106,6 +152,7 @@ export const StudyCircuit: FC<StudyCircuitProps> = ({ initialTrack = 'ALL' }) =>
   if (viewState === 'LOADING') {
     return (
       <div className="flex h-full w-full flex-col">
+        <ExportBar />
         <StudyTrackFilter active={activeTrack} onChange={setActiveTrack} queueCount={0} />
         <div className="flex flex-1 items-center justify-center bg-slate-950 font-mono text-sm text-slate-400">
           Initializing native database pools and FSRS queues...
@@ -117,6 +164,7 @@ export const StudyCircuit: FC<StudyCircuitProps> = ({ initialTrack = 'ALL' }) =>
   if (viewState === 'IDLE') {
     return (
       <div className="flex h-full w-full flex-col">
+        <ExportBar />
         <StudyTrackFilter active={activeTrack} onChange={setActiveTrack} queueCount={0} />
         <div className="flex flex-1 flex-col items-center justify-center bg-slate-950 px-6 text-center font-mono">
           <div className="mb-2 text-xl text-emerald-400">✓ All Systems Nominal</div>
@@ -132,6 +180,7 @@ export const StudyCircuit: FC<StudyCircuitProps> = ({ initialTrack = 'ALL' }) =>
 
   return (
     <div className="flex h-full min-h-0 w-full flex-col bg-slate-950 font-mono text-slate-100 selection:bg-amber-500/30">
+      <ExportBar />
       <StudyTrackFilter
         active={activeTrack}
         onChange={setActiveTrack}

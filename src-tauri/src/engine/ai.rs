@@ -6,12 +6,18 @@ use futures_util::StreamExt;
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
+use sqlx::{Row, SqlitePool};
+use tracing::warn;
 
 use crate::errors::{AppError, AppResult};
 
 const DEFAULT_HOST: &str = "127.0.0.1";
 const DEFAULT_OLLAMA_PORT: u16 = 11434;
 const DEFAULT_MODEL: &str = "llama3.2";
+
+pub const CONFIG_KEY_OLLAMA_HOST: &str = "ollama_host";
+pub const CONFIG_KEY_OLLAMA_PORT: &str = "ollama_port";
+pub const CONFIG_KEY_OLLAMA_MODEL: &str = "ollama_model";
 
 /// Supported local inference wire formats.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -115,6 +121,46 @@ impl LocalInferenceConfig {
         format!("http://{}:{}", self.host, self.port)
     }
 
+    pub async fn load(pool: &SqlitePool) -> AppResult<Self> {
+        let defaults = Self::default();
+        let host = read_config_value(pool, CONFIG_KEY_OLLAMA_HOST)
+            .await?
+            .unwrap_or(defaults.host);
+        let port_raw = read_config_value(pool, CONFIG_KEY_OLLAMA_PORT)
+            .await?
+            .unwrap_or_else(|| defaults.port.to_string());
+        let port = port_raw
+            .parse::<u16>()
+            .map_err(|_| AppError::InternalError(format!("invalid ollama_port: {port_raw}")))?;
+        let model = read_config_value(pool, CONFIG_KEY_OLLAMA_MODEL)
+            .await?
+            .unwrap_or(defaults.model);
+        Ok(Self {
+            host,
+            port,
+            model,
+            backend: InferenceBackend::OllamaChat,
+        })
+    }
+
+    pub async fn save(pool: &SqlitePool, config: &Self) -> AppResult<()> {
+        if config.host.trim().is_empty() {
+            return Err(AppError::InternalError("ollama host must not be empty".into()));
+        }
+        if config.model.trim().is_empty() {
+            return Err(AppError::InternalError("ollama model must not be empty".into()));
+        }
+        write_config_value(pool, CONFIG_KEY_OLLAMA_HOST, config.host.trim()).await?;
+        write_config_value(
+            pool,
+            CONFIG_KEY_OLLAMA_PORT,
+            &config.port.to_string(),
+        )
+        .await?;
+        write_config_value(pool, CONFIG_KEY_OLLAMA_MODEL, config.model.trim()).await?;
+        Ok(())
+    }
+
     fn endpoint_path(&self) -> &'static str {
         match self.backend {
             InferenceBackend::OllamaChat => "/api/chat",
@@ -148,14 +194,17 @@ pub async fn check_ollama_health(config: &LocalInferenceConfig) -> OllamaHealth 
 
     let url = format!("{}/api/tags", config.base_url());
     let Ok(response) = client.get(&url).send().await else {
+        warn!(url = %url, "ollama health check request failed");
         return offline;
     };
 
     if !response.status().is_success() {
+        warn!(url = %url, status = %response.status(), "ollama health check non-success");
         return offline;
     }
 
     let Ok(body) = response.json::<Value>().await else {
+        warn!(url = %url, "ollama health check response parse failed");
         return offline;
     };
 
@@ -170,6 +219,26 @@ pub async fn check_ollama_health(config: &LocalInferenceConfig) -> OllamaHealth 
         model_count,
         default_model: config.model.clone(),
     }
+}
+
+async fn read_config_value(pool: &SqlitePool, key: &str) -> AppResult<Option<String>> {
+    let row = sqlx::query("SELECT value FROM app_config WHERE key = ?")
+        .bind(key)
+        .fetch_optional(pool)
+        .await?;
+    Ok(row.map(|r| r.get::<String, _>("value")))
+}
+
+async fn write_config_value(pool: &SqlitePool, key: &str, value: &str) -> AppResult<()> {
+    sqlx::query(
+        "INSERT INTO app_config (key, value) VALUES (?, ?)
+         ON CONFLICT(key) DO UPDATE SET value = excluded.value",
+    )
+    .bind(key)
+    .bind(value)
+    .execute(pool)
+    .await?;
+    Ok(())
 }
 
 /// HTTP client for localhost inference APIs.

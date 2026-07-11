@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-get-inference-settings"
+description = "Enables the get_inference_settings command without any pre-configured scope."
+commands.allow = ["get_inference_settings"]
+
+[[permission]]
+identifier = "deny-get-inference-settings"
+description = "Denies the get_inference_settings command without any pre-configured scope."
+commands.deny = ["get_inference_settings"]

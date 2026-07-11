@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StudyCircuit } from './components/StudyCircuit';
 import { RuleSandbox } from './components/RuleSandbox';
 import { TopologyGraph } from './components/TopologyGraph';
 import { IngestIntel } from './components/IngestIntel';
 import { SyncDashboard } from './components/SyncDashboard';
+import { ApiService, isDesktopShell } from './services/api';
 import type { StudyTrack } from './lib/studyTracks';
 
 type ActivePanel = 'TRIAGE' | 'SANDBOX' | 'TOPOLOGY' | 'INGEST' | 'DESK';
@@ -11,6 +12,31 @@ type ActivePanel = 'TRIAGE' | 'SANDBOX' | 'TOPOLOGY' | 'INGEST' | 'DESK';
 function App() {
   const [activePanel, setActivePanel] = useState<ActivePanel>('TRIAGE');
   const [studyTrack, setStudyTrack] = useState<StudyTrack>('ALL');
+  const [ollamaOnline, setOllamaOnline] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    if (!isDesktopShell()) {
+      setOllamaOnline(null);
+      return;
+    }
+
+    let cancelled = false;
+    const poll = async () => {
+      try {
+        const status = await ApiService.getSyncDashboardStatus();
+        if (!cancelled) setOllamaOnline(status.ollama.online);
+      } catch {
+        if (!cancelled) setOllamaOnline(false);
+      }
+    };
+
+    void poll();
+    const timer = setInterval(poll, 30_000);
+    return () => {
+      cancelled = true;
+      clearInterval(timer);
+    };
+  }, []);
 
   return (
     <div className="flex h-screen w-screen bg-slate-950 text-slate-100 overflow-hidden select-none font-mono">
@@ -84,18 +110,23 @@ function App() {
         {/* Global Local Node Infrastructure Footer Status */}
         <div className="border-t border-slate-900 pt-4 text-[10px] text-slate-600 flex flex-col gap-1">
           <div>DATABASE_STATUS: SECURE_SQLITE</div>
-          <div>ISOLATION_MODE: AIR_GAPPED</div>
+          <div>FEEDS: HTTPS_LIVE</div>
+          <div>
+            OLLAMA:{' '}
+            {ollamaOnline === null
+              ? 'UNKNOWN'
+              : ollamaOnline
+                ? 'ONLINE'
+                : 'OFFLINE'}
+          </div>
         </div>
       </div>
 
       {/* Main Operations Terminal Window Panel */}
       <main className="flex-1 h-full bg-slate-950 overflow-hidden relative">
-        {activePanel === 'TRIAGE' && (
-          <StudyCircuit
-            key={studyTrack}
-            initialTrack={studyTrack}
-          />
-        )}
+        <div className={activePanel === 'TRIAGE' ? 'h-full' : 'hidden'}>
+          <StudyCircuit track={studyTrack} />
+        </div>
         {activePanel === 'SANDBOX' && <RuleSandbox />}
         {activePanel === 'TOPOLOGY' && (
           <TopologyGraph onNavigateToTriage={() => setActivePanel('TRIAGE')} />

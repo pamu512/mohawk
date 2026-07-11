@@ -195,6 +195,12 @@
           "markdownDescription": "Enables the execute_sandbox_rules command without any pre-configured scope."
         },
         {
+          "description": "Enables the export_study_cards command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-export-study-cards",
+          "markdownDescription": "Enables the export_study_cards command without any pre-configured scope."
+        },
+        {
           "description": "Enables the force_sync_curriculum command without any pre-configured scope.",
           "type": "string",
           "const": "allow-force-sync-curriculum",
@@ -205,6 +211,12 @@
           "type": "string",
           "const": "allow-generate-cards-from-text",
           "markdownDescription": "Enables the generate_cards_from_text command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the get_inference_settings command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-get-inference-settings",
+          "markdownDescription": "Enables the get_inference_settings command without any pre-configured scope."
         },
         {
           "description": "Enables the get_knowledge_graph command without any pre-configured scope.",
@@ -225,6 +237,12 @@
           "markdownDescription": "Enables the get_node_linked_cards command without any pre-configured scope."
         },
         {
+          "description": "Enables the get_pending_course_detail command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-get-pending-course-detail",
+          "markdownDescription": "Enables the get_pending_course_detail command without any pre-configured scope."
+        },
+        {
           "description": "Enables the get_sync_dashboard_status command without any pre-configured scope.",
           "type": "string",
           "const": "allow-get-sync-dashboard-status",
@@ -241,6 +259,12 @@
           "type": "string",
           "const": "allow-submit-review-score",
           "markdownDescription": "Enables the submit_review_score command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the update_inference_settings command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-update-inference-settings",
+          "markdownDescription": "Enables the update_inference_settings command without any pre-configured scope."
         },
         {
           "description": "Denies the accept_pending_course command without any pre-configured scope.",
@@ -261,6 +285,12 @@
           "markdownDescription": "Denies the execute_sandbox_rules command without any pre-configured scope."
         },
         {
+          "description": "Denies the export_study_cards command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-export-study-cards",
+          "markdownDescription": "Denies the export_study_cards command without any pre-configured scope."
+        },
+        {
           "description": "Denies the force_sync_curriculum command without any pre-configured scope.",
           "type": "string",
           "const": "deny-force-sync-curriculum",
@@ -271,6 +301,12 @@
           "type": "string",
           "const": "deny-generate-cards-from-text",
           "markdownDescription": "Denies the generate_cards_from_text command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the get_inference_settings command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-get-inference-settings",
+          "markdownDescription": "Denies the get_inference_settings command without any pre-configured scope."
         },
         {
           "description": "Denies the get_knowledge_graph command without any pre-configured scope.",
@@ -291,6 +327,12 @@
           "markdownDescription": "Denies the get_node_linked_cards command without any pre-configured scope."
         },
         {
+          "description": "Denies the get_pending_course_detail command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-get-pending-course-detail",
+          "markdownDescription": "Denies the get_pending_course_detail command without any pre-configured scope."
+        },
+        {
           "description": "Denies the get_sync_dashboard_status command without any pre-configured scope.",
           "type": "string",
           "const": "deny-get-sync-dashboard-status",
@@ -307,6 +349,12 @@
           "type": "string",
           "const": "deny-submit-review-score",
           "markdownDescription": "Denies the submit_review_score command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the update_inference_settings command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-update-inference-settings",
+          "markdownDescription": "Denies the update_inference_settings command without any pre-configured scope."
         },
         {
           "description": "Default core plugins set.\n#### This default permission set includes:\n\n- `core:path:default`\n- `core:event:default`\n- `core:window:default`\n- `core:webview:default`\n- `core:app:default`\n- `core:image:default`\n- `core:resources:default`\n- `core:menu:default`\n- `core:tray:default`",

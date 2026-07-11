@@ -123,6 +123,7 @@ pub struct GenerationBatchReport {
 
 /// Process scraped text chunks through Ollama and stage validated courses for analyst review.
 pub async fn generate_from_chunks(
+    pool: &SqlitePool,
     client: &LocalAiClient,
     chunks: &[TextChunk],
 ) -> AppResult<GenerationBatchReport> {
@@ -136,7 +137,7 @@ pub async fn generate_from_chunks(
 
     for chunk in chunks.iter().take(MAX_CHUNKS_PER_SYNC) {
         report.chunks_attempted += 1;
-        match extract_and_stage_course(client, chunk).await {
+        match extract_and_stage_course(pool, client, chunk).await {
             Ok(staged) => {
                 report.courses_staged += 1;
                 report.nodes_staged += staged.node_count;
@@ -158,15 +159,18 @@ pub async fn generate_from_chunks(
 
 /// Run the LLM extraction + validation loop, then stage for review (no DB write).
 pub async fn extract_and_stage_course(
+    pool: &SqlitePool,
     client: &LocalAiClient,
     chunk: &TextChunk,
 ) -> AppResult<pending_courses::PendingCourseSummary> {
     let course = request_validated_course(client, chunk).await?;
-    Ok(pending_courses::stage(
+    pending_courses::stage(
+        pool,
         course,
         chunk.title.clone(),
         chunk.chunk_index,
-    ))
+    )
+    .await
 }
 
 async fn request_validated_course(

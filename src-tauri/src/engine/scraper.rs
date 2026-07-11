@@ -4,11 +4,13 @@
 use std::time::Duration;
 
 use chrono::{DateTime, Utc};
+use reqwest::redirect::Policy;
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use sqlx::SqlitePool;
 use tauri::AppHandle;
 use tauri::Manager;
+use tracing::{info, warn};
 
 use crate::engine::ai::{LocalAiClient, LocalInferenceConfig};
 use crate::engine::generator;
@@ -25,6 +27,7 @@ pub const CONFIG_KEY_LAST_SYNC: &str = "last_sync_timestamp";
 pub const DEFAULT_CHUNK_CHARS: usize = 2_000;
 
 const REQUEST_TIMEOUT: Duration = Duration::from_secs(30);
+const MAX_FEED_BYTES: usize = 2 * 1024 * 1024;
 const USER_AGENT: &str = "Mohawk/0.1 (local-first fraud study; +https://github.com/mohawk)";
 
 /// Known ingestion source metadata for the Threat Intel Desk dashboard.
@@ -52,7 +55,7 @@ const INGESTION_SOURCE_DEFS: &[IngestionSourceDef] = &[
     },
     IngestionSourceDef {
         id: "cfpb_briefings",
-        label: "FinCEN Briefings",
+        label: "CFPB Newsroom",
         url: "https://www.consumerfinance.gov/about-us/newsroom/feed/",
         desk_category: "regulatory",
     },
@@ -76,14 +79,9 @@ const INGESTION_SOURCE_DEFS: &[IngestionSourceDef] = &[
     },
 ];
 
-/// Public RSS / XML threat-intelligence and regulatory feeds (HTTPS only).
-const THREAT_INTEL_FEEDS: &[&str] = &[
-    "https://krebsonsecurity.com/feed/",
-    "https://www.bleepingcomputer.com/feed/",
-    "https://www.cisa.gov/cybersecurity-advisories/all.xml",
-    "https://www.consumerfinance.gov/about-us/newsroom/feed/",
-    "https://www.ftc.gov/feeds/press-release-consumer-safety/rss.xml",
-];
+fn feed_urls() -> Vec<&'static str> {
+    INGESTION_SOURCE_DEFS.iter().map(|s| s.url).collect()
+}
 
 pub fn ingestion_sources() -> Vec<IngestionSource> {
     INGESTION_SOURCE_DEFS
@@ -247,10 +245,12 @@ pub async fn write_last_sync_timestamp(pool: &SqlitePool, at: DateTime<Utc>) -> 
 }
 
 pub async fn run_sync_cycle(pool: &SqlitePool) -> AppResult<SyncReport> {
+    info!("curriculum sync cycle starting");
     sync_log::push("FETCHING", "Grabbing RSS feeds from threat intel matrix...");
 
     let client = Client::builder()
         .timeout(REQUEST_TIMEOUT)
+        .redirect(Policy::limited(5))
         .user_agent(USER_AGENT)
         .build()
         .map_err(|e| AppError::InternalError(format!("http client init failed: {e}")))?;
@@ -313,8 +313,9 @@ pub async fn run_sync_cycle(pool: &SqlitePool) -> AppResult<SyncReport> {
             "Ollama compiling payload structures into course graph...",
         );
 
-        match LocalAiClient::new(LocalInferenceConfig::default()) {
-            Ok(client) => match generator::generate_from_chunks(&client, &chunks).await {
+        match LocalInferenceConfig::load(pool).await {
+            Ok(inference) => match LocalAiClient::new(inference) {
+            Ok(client) => match generator::generate_from_chunks(pool, &client, &chunks).await {
                 Ok(gen) => {
                     if gen.courses_staged > 0 {
                         sync_log::push(
@@ -344,6 +345,11 @@ pub async fn run_sync_cycle(pool: &SqlitePool) -> AppResult<SyncReport> {
                 sync_log::push("ERROR", format!("Ollama client init failed: {e}"));
                 errors.push(format!("ollama client init failed: {e}"));
             }
+        },
+            Err(e) => {
+                sync_log::push("ERROR", format!("Inference settings load failed: {e}"));
+                errors.push(format!("inference settings load failed: {e}"));
+            }
         }
     } else if feeds_succeeded == 0 {
         sync_log::push("ERROR", "All ingestion sources unreachable.");
@@ -353,30 +359,54 @@ pub async fn run_sync_cycle(pool: &SqlitePool) -> AppResult<SyncReport> {
         )));
     }
 
+    let urls = feed_urls();
     let report = SyncReport {
         synced_at,
-        feeds_attempted: THREAT_INTEL_FEEDS.len(),
+        feeds_attempted: urls.len(),
         feeds_succeeded,
         items_extracted,
         chunks_produced,
         errors,
     };
     sync_log::store_report(&report);
+    info!(
+        feeds_ok = feeds_succeeded,
+        chunks = chunks_produced,
+        "curriculum sync cycle finished"
+    );
     Ok(report)
 }
 
 async fn fetch_all_feeds(
     client: &Client,
 ) -> Vec<(&'static str, Result<Vec<FeedItem>, AppError>)> {
-    let mut out = Vec::with_capacity(THREAT_INTEL_FEEDS.len());
-    for url in THREAT_INTEL_FEEDS {
+    let urls = feed_urls();
+    let mut out = Vec::with_capacity(urls.len());
+    for url in urls {
         let result = fetch_feed(client, url).await;
-        out.push((*url, result));
+        out.push((url, result));
     }
     out
 }
 
+/// HTTPS-only allowlist guard for outbound feed fetches.
+pub fn validate_feed_url(url: &str) -> AppResult<()> {
+    if !url.starts_with("https://") {
+        return Err(AppError::InternalError(format!(
+            "feed URL must use HTTPS: {url}"
+        )));
+    }
+    if !INGESTION_SOURCE_DEFS.iter().any(|s| s.url == url) {
+        return Err(AppError::InternalError(format!(
+            "feed URL not on allowlist: {url}"
+        )));
+    }
+    Ok(())
+}
+
 async fn fetch_feed(client: &Client, url: &str) -> AppResult<Vec<FeedItem>> {
+    validate_feed_url(url)?;
+
     let response = client
         .get(url)
         .send()
@@ -390,10 +420,20 @@ async fn fetch_feed(client: &Client, url: &str) -> AppResult<Vec<FeedItem>> {
         )));
     }
 
-    let body = response
-        .text()
+    let bytes = response
+        .bytes()
         .await
         .map_err(|e| AppError::InternalError(format!("read body from {url}: {e}")))?;
+
+    if bytes.len() > MAX_FEED_BYTES {
+        warn!(url, bytes = bytes.len(), "feed response exceeded size cap");
+        return Err(AppError::InternalError(format!(
+            "feed body from {url} exceeds {MAX_FEED_BYTES} byte cap"
+        )));
+    }
+
+    let body = String::from_utf8(bytes.to_vec())
+        .map_err(|e| AppError::InternalError(format!("feed body from {url} is not UTF-8: {e}")))?;
 
     parse_rss_or_atom(&body).map_err(|e| AppError::InternalError(format!("parse {url}: {e}")))
 }
@@ -668,6 +708,13 @@ mod tests {
         assert_eq!(items.len(), 2);
         assert!(items[0].title.contains("BIN Velocity"));
         assert!(strip_html(&items[0].body).contains("CNP BINs"));
+    }
+
+    #[test]
+    fn validate_feed_url_rejects_http_and_unknown() {
+        assert!(validate_feed_url("http://evil.com/feed").is_err());
+        assert!(validate_feed_url("https://evil.com/feed").is_err());
+        assert!(validate_feed_url(INGESTION_SOURCE_DEFS[0].url).is_ok());
     }
 
     #[test]

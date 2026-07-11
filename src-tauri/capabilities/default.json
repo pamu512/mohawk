@@ -18,6 +18,10 @@
     "allow-force-sync-curriculum",
     "allow-accept-pending-course",
     "allow-reject-pending-course",
+    "allow-get-pending-course-detail",
+    "allow-get-inference-settings",
+    "allow-update-inference-settings",
+    "allow-export-study-cards",
 
     "core:path:deny-resolve",
     "core:path:deny-resolve-directory",

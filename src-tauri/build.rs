@@ -13,6 +13,10 @@ fn main() {
                 "force_sync_curriculum",
                 "accept_pending_course",
                 "reject_pending_course",
+                "get_pending_course_detail",
+                "get_inference_settings",
+                "update_inference_settings",
+                "export_study_cards",
             ]),
         ),
     )

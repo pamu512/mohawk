@@ -8,23 +8,17 @@ import {
 import { listen, type UnlistenFn } from '@tauri-apps/api/event';
 import {
   ApiService,
+  LocalInferenceConfig,
+  PendingCourseDetail,
   PendingCourseSummary,
   SyncDashboardStatus,
   SyncLogLine,
   isDesktopShell,
   TAURI_IPC_ERROR,
 } from '../services/api';
+import { formatCountdown } from '../lib/formatCountdown';
 
 const STATUS_REFRESH_MS = 30_000;
-
-function formatCountdown(totalSeconds: number): string {
-  if (totalSeconds <= 0) return 'DUE NOW — AWAITING CYCLE';
-  const days = Math.floor(totalSeconds / 86_400);
-  const hours = Math.floor((totalSeconds % 86_400) / 3_600);
-  const minutes = Math.floor((totalSeconds % 3_600) / 60);
-  const seconds = totalSeconds % 60;
-  return `${days}d ${String(hours).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}m ${String(seconds).padStart(2, '0')}s`;
-}
 
 function formatTimestamp(iso: string | null | undefined): string {
   if (!iso) return 'NEVER';
@@ -59,6 +53,14 @@ export const SyncDashboard: FC = () => {
   const [forcing, setForcing] = useState(false);
   const [actingId, setActingId] = useState<string | null>(null);
   const [inDesktopShell, setInDesktopShell] = useState(false);
+  const [settings, setSettings] = useState<LocalInferenceConfig | null>(null);
+  const [settingsDraft, setSettingsDraft] = useState({ host: '127.0.0.1', port: '11434', model: 'llama3.2' });
+  const [settingsSaving, setSettingsSaving] = useState(false);
+  const [settingsError, setSettingsError] = useState<string | null>(null);
+  const [settingsSaved, setSettingsSaved] = useState(false);
+  const [previewId, setPreviewId] = useState<string | null>(null);
+  const [previewDetail, setPreviewDetail] = useState<PendingCourseDetail | null>(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
   const consoleRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -77,6 +79,17 @@ export const SyncDashboard: FC = () => {
       setPending(next.pending_courses);
       setCountdownSec(next.seconds_until_next_sync);
       setLoadError(null);
+      try {
+        const inference = await ApiService.getInferenceSettings();
+        setSettings(inference);
+        setSettingsDraft({
+          host: inference.host,
+          port: String(inference.port),
+          model: inference.model,
+        });
+      } catch {
+        // Settings panel stays on last draft if inference IPC fails mid-refresh.
+      }
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       setLoadError(message);
@@ -165,10 +178,62 @@ export const SyncDashboard: FC = () => {
     setActingId(id);
     try {
       await ApiService.rejectPendingCourse(id);
+      if (previewId === id) {
+        setPreviewId(null);
+        setPreviewDetail(null);
+      }
     } catch (err) {
       setActionError(err instanceof Error ? err.message : String(err));
     } finally {
       setActingId(null);
+    }
+  };
+
+  const handleSaveSettings = async () => {
+    if (!inDesktopShell) return;
+    setSettingsError(null);
+    setSettingsSaved(false);
+    const port = Number.parseInt(settingsDraft.port, 10);
+    if (!Number.isFinite(port) || port <= 0 || port > 65535) {
+      setSettingsError('Port must be between 1 and 65535.');
+      return;
+    }
+    setSettingsSaving(true);
+    try {
+      const next: LocalInferenceConfig = {
+        host: settingsDraft.host.trim(),
+        port,
+        model: settingsDraft.model.trim(),
+        backend: settings?.backend ?? 'ollama_chat',
+      };
+      await ApiService.updateInferenceSettings(next);
+      setSettings(next);
+      setSettingsSaved(true);
+      await refresh();
+    } catch (err) {
+      setSettingsError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setSettingsSaving(false);
+    }
+  };
+
+  const handlePreview = async (id: string) => {
+    if (previewId === id) {
+      setPreviewId(null);
+      setPreviewDetail(null);
+      return;
+    }
+    setPreviewId(id);
+    setPreviewLoading(true);
+    setPreviewDetail(null);
+    try {
+      const detail = await ApiService.getPendingCourseDetail(id);
+      setPreviewDetail(detail);
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : String(err));
+      setPreviewId(null);
+    } finally {
+      setPreviewLoading(false);
     }
   };
 
@@ -256,6 +321,50 @@ export const SyncDashboard: FC = () => {
             )}
           </section>
 
+          <section className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
+            <div className="mb-3 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+              // INFERENCE SETTINGS
+            </div>
+            <div className="grid grid-cols-3 gap-2 text-[10px]">
+              <label className="flex flex-col gap-1 text-slate-500">
+                HOST
+                <input
+                  value={settingsDraft.host}
+                  onChange={(e) => setSettingsDraft((d) => ({ ...d, host: e.target.value }))}
+                  className="rounded border border-slate-700 bg-slate-950 px-2 py-1.5 text-slate-200"
+                />
+              </label>
+              <label className="flex flex-col gap-1 text-slate-500">
+                PORT
+                <input
+                  value={settingsDraft.port}
+                  onChange={(e) => setSettingsDraft((d) => ({ ...d, port: e.target.value }))}
+                  className="rounded border border-slate-700 bg-slate-950 px-2 py-1.5 text-slate-200"
+                />
+              </label>
+              <label className="col-span-3 flex flex-col gap-1 text-slate-500">
+                MODEL
+                <input
+                  value={settingsDraft.model}
+                  onChange={(e) => setSettingsDraft((d) => ({ ...d, model: e.target.value }))}
+                  className="rounded border border-slate-700 bg-slate-950 px-2 py-1.5 text-slate-200"
+                />
+              </label>
+            </div>
+            <button
+              type="button"
+              onClick={handleSaveSettings}
+              disabled={settingsSaving || !inDesktopShell}
+              className="mt-3 w-full rounded border border-cyan-800 bg-cyan-950/40 py-2 text-[10px] font-bold text-cyan-300 hover:bg-cyan-900/40 disabled:opacity-40"
+            >
+              {settingsSaving ? 'SAVING...' : 'SAVE INFERENCE SETTINGS'}
+            </button>
+            {settingsSaved && (
+              <p className="mt-2 text-[10px] text-emerald-400">Settings saved.</p>
+            )}
+            {settingsError && <p className="mt-2 text-[10px] text-rose-400">{settingsError}</p>}
+          </section>
+
           <section className="rounded-lg border border-violet-900/40 bg-violet-950/10 p-4">
             <div className="mb-3 flex items-center justify-between">
               <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">
@@ -283,7 +392,15 @@ export const SyncDashboard: FC = () => {
                   <div className="truncate text-[9px] text-slate-600">
                     {course.source_title} · chunk {course.chunk_index}
                   </div>
-                  <div className="mt-2 flex gap-2">
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      disabled={actingId === course.id}
+                      onClick={() => handlePreview(course.id)}
+                      className="rounded border border-violet-800 bg-violet-950/40 px-2 py-1 text-[10px] font-bold text-violet-300 hover:bg-violet-900/50 disabled:opacity-40"
+                    >
+                      {previewId === course.id ? 'HIDE' : 'PREVIEW'}
+                    </button>
                     <button
                       type="button"
                       disabled={actingId === course.id}
@@ -301,6 +418,49 @@ export const SyncDashboard: FC = () => {
                       REJECT
                     </button>
                   </div>
+                  {previewId === course.id && (
+                    <div className="mt-3 rounded border border-violet-900/50 bg-black/40 p-2 text-[10px]">
+                      {previewLoading && (
+                        <p className="text-slate-500">Loading course preview...</p>
+                      )}
+                      {previewDetail && previewDetail.summary.id === course.id && (
+                        <div className="space-y-2">
+                          <div>
+                            <div className="font-bold text-violet-200">Nodes</div>
+                            <ul className="mt-1 space-y-1 text-slate-400">
+                              {previewDetail.course.new_nodes.map((node) => (
+                                <li key={node.id}>
+                                  [{node.entity_type}] {node.title} — {node.description}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                          <div>
+                            <div className="font-bold text-violet-200">Edges</div>
+                            <ul className="mt-1 space-y-1 text-slate-500">
+                              {previewDetail.course.new_edges.map((edge, idx) => (
+                                <li key={`${edge.source_node_id}-${idx}`}>
+                                  {edge.source_node_id.slice(0, 8)}… →{' '}
+                                  {edge.target_node_id.slice(0, 8)}… ({edge.relationship_type})
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                          <div>
+                            <div className="font-bold text-violet-200">Cards</div>
+                            <ul className="mt-1 space-y-1 text-slate-400">
+                              {previewDetail.course.new_cards.map((card, idx) => (
+                                <li key={idx}>
+                                  <span className="text-slate-500">[{card.card_type}]</span> Q:{' '}
+                                  {card.question} · A: {card.answer}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </li>
               ))}
             </ul>

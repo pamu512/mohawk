@@ -7,9 +7,16 @@ mod state;
 
 use state::AppState;
 use tauri::Manager;
+use tracing_subscriber::EnvFilter;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    tracing_subscriber::fmt()
+        .with_env_filter(
+            EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("info")),
+        )
+        .init();
+
     tauri::Builder::default()
         .setup(|app| {
             let handle = app.handle().clone();
@@ -40,6 +47,10 @@ pub fn run() {
             commands::force_sync_curriculum,
             commands::accept_pending_course,
             commands::reject_pending_course,
+            commands::get_pending_course_detail,
+            commands::get_inference_settings,
+            commands::update_inference_settings,
+            commands::export_study_cards,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -245,7 +245,10 @@ pub async fn generate_cards_from_text(
     }
 
     state.begin_background_task();
-    let config = inference.unwrap_or_default();
+    let config = match inference {
+        Some(c) => c,
+        None => LocalInferenceConfig::load(state.db()).await?,
+    };
     let client = match LocalAiClient::new(config) {
         Ok(c) => c,
         Err(e) => {
@@ -485,7 +488,8 @@ pub async fn get_sync_dashboard_status(
 
     let now = Utc::now();
     let last = read_last_sync_timestamp(state.db()).await?;
-    let ollama = check_ollama_health(&LocalInferenceConfig::default()).await;
+    let inference = LocalInferenceConfig::load(state.db()).await?;
+    let ollama = check_ollama_health(&inference).await;
 
     Ok(SyncDashboardStatus {
         last_sync_at: last.map(|t| t.to_rfc3339()),
@@ -498,7 +502,7 @@ pub async fn get_sync_dashboard_status(
         logs: sync_log::recent_logs(),
         last_report: sync_log::last_report(),
         ollama,
-        pending_courses: pending_courses::list_pending(),
+        pending_courses: pending_courses::list_pending(state.db()).await?,
     })
 }
 
@@ -563,13 +567,52 @@ pub async fn accept_pending_course(
     Ok(saved)
 }
 
-/// Discard a staged course without writing to SQLite.
+/// Discard a staged course without writing graph/cards.
 #[tauri::command]
-pub async fn reject_pending_course(pending_id: String) -> Result<(), AppError> {
+pub async fn reject_pending_course(
+    state: tauri::State<'_, AppState>,
+    pending_id: String,
+) -> Result<(), AppError> {
     use crate::engine::pending_courses;
     use crate::engine::sync_log;
 
-    pending_courses::reject_pending(&pending_id)?;
+    pending_courses::reject_pending(state.db(), &pending_id).await?;
     sync_log::push("REVIEW", format!("Rejected staged course '{pending_id}'"));
     Ok(())
+}
+
+/// Full staged course payload for analyst preview before accept/reject.
+#[tauri::command]
+pub async fn get_pending_course_detail(
+    state: tauri::State<'_, AppState>,
+    pending_id: String,
+) -> Result<crate::engine::pending_courses::PendingCourseDetail, AppError> {
+    use crate::engine::pending_courses;
+    pending_courses::get_detail(state.db(), &pending_id).await
+}
+
+/// Read persisted Ollama connection settings.
+#[tauri::command]
+pub async fn get_inference_settings(
+    state: tauri::State<'_, AppState>,
+) -> Result<LocalInferenceConfig, AppError> {
+    LocalInferenceConfig::load(state.db()).await
+}
+
+/// Persist Ollama host/port/model for sync and generation pipelines.
+#[tauri::command]
+pub async fn update_inference_settings(
+    state: tauri::State<'_, AppState>,
+    settings: LocalInferenceConfig,
+) -> Result<(), AppError> {
+    LocalInferenceConfig::save(state.db(), &settings).await
+}
+
+/// Export all study cards as CSV or Anki TSV for external review.
+#[tauri::command]
+pub async fn export_study_cards(
+    state: tauri::State<'_, AppState>,
+    format: crate::engine::export::ExportFormat,
+) -> Result<crate::engine::export::ExportResult, AppError> {
+    crate::engine::export::export_study_cards(state.db(), format).await
 }

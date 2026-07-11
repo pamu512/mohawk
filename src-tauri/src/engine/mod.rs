@@ -2,6 +2,7 @@
 
 pub mod ai;
 pub mod evaluator;
+pub mod export;
 pub mod generator;
 pub mod pending_courses;
 pub mod scraper;
