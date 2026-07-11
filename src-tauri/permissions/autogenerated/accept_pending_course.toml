@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-accept-pending-course"
+description = "Enables the accept_pending_course command without any pre-configured scope."
+commands.allow = ["accept_pending_course"]
+
+[[permission]]
+identifier = "deny-accept-pending-course"
+description = "Denies the accept_pending_course command without any pre-configured scope."
+commands.deny = ["accept_pending_course"]

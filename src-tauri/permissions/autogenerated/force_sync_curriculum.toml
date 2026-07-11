@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-force-sync-curriculum"
+description = "Enables the force_sync_curriculum command without any pre-configured scope."
+commands.allow = ["force_sync_curriculum"]
+
+[[permission]]
+identifier = "deny-force-sync-curriculum"
+description = "Denies the force_sync_curriculum command without any pre-configured scope."
+commands.deny = ["force_sync_curriculum"]

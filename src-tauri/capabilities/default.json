@@ -1,0 +1,26 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Main window capability: Mohawk backend IPC only. SQLite and filesystem access stay in Rust (app_data_dir); the webview has no fs/http plugins, no path resolution, and no remote origin access.",
+  "local": true,
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+
+    "allow-get-next-review-cards",
+    "allow-submit-review-score",
+    "allow-get-knowledge-graph",
+    "allow-execute-sandbox-rules",
+    "allow-generate-cards-from-text",
+    "allow-get-node-linked-cards",
+    "allow-create-manual-card-for-node",
+    "allow-get-sync-dashboard-status",
+    "allow-force-sync-curriculum",
+    "allow-accept-pending-course",
+    "allow-reject-pending-course",
+
+    "core:path:deny-resolve",
+    "core:path:deny-resolve-directory",
+    "core:window:deny-create"
+  ]
+}

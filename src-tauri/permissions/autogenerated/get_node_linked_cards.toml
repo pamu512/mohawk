@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-get-node-linked-cards"
+description = "Enables the get_node_linked_cards command without any pre-configured scope."
+commands.allow = ["get_node_linked_cards"]
+
+[[permission]]
+identifier = "deny-get-node-linked-cards"
+description = "Denies the get_node_linked_cards command without any pre-configured scope."
+commands.deny = ["get_node_linked_cards"]

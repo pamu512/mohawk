@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-create-manual-card-for-node"
+description = "Enables the create_manual_card_for_node command without any pre-configured scope."
+commands.allow = ["create_manual_card_for_node"]
+
+[[permission]]
+identifier = "deny-create-manual-card-for-node"
+description = "Denies the create_manual_card_for_node command without any pre-configured scope."
+commands.deny = ["create_manual_card_for_node"]
