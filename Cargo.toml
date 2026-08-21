@@ -1,0 +1,3 @@
+[workspace]
+members = ["crates/mohawk-fsrs"]
+resolver = "2"

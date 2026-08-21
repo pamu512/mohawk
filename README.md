@@ -19,7 +19,7 @@ npm install
 npm run dev
 ```
 
-This starts the Vite dev server and opens the **Mohawk** desktop window.
+This starts the Vite dev server and opens the **Mohawk** desktop window. On Linux, `npm run dev` needs the usual local Tauri system packages (glib, webkitgtk, and related `.pc` files). Those packages are not installed by CI.
 
 > **Important:** Do not open `http://localhost:1420` in a browser tab. IPC commands only work inside the Tauri webview. If you see `Cannot read properties of undefined (reading 'invoke')`, you are in the wrong shell.
 
@@ -43,12 +43,14 @@ Staged courses survive app restarts (stored in SQLite).
 
 | Command | Description |
 |---------|-------------|
-| `npm run dev` | Tauri dev (desktop app) |
+| `npm run dev` | Tauri desktop window (needs local Tauri Linux deps) |
 | `npm run dev:web` | Vite only (no IPC; UI preview only) |
 | `npm run build` | Typecheck + production frontend build |
 | `npm run lint` | ESLint |
 | `npm test` | Vitest unit tests |
-| `cd src-tauri && cargo test` | Rust unit tests |
+| `cargo test -p mohawk-fsrs` | FSRS domain unit tests (workspace crate `mohawk-fsrs`; no Tauri) |
+
+CI rust runs `cargo fetch` then `cargo test --offline -p mohawk-fsrs`. That job does not compile `src-tauri` / `mohawk_lib`.
 
 ## Configuration
 
@@ -60,6 +62,7 @@ Set `RUST_LOG=debug` before launch for structured backend tracing.
 
 - **Frontend:** React + Vite + Tailwind (`src/`)
 - **Backend:** Rust + Tauri 2 + sqlx/SQLite (`src-tauri/`)
+- **FSRS math:** `crates/mohawk-fsrs` (chrono + serde only)
 - **Sync:** HTTPS RSS allowlist → chunk → Ollama JSON extraction → analyst review → persist
 
 ## License
