@@ -2035,6 +2035,7 @@ dependencies = [
  "anyhow",
  "chrono",
  "futures-util",
+ "mohawk-fsrs",
  "reqwest 0.12.28",
  "serde",
  "serde_json",
@@ -2046,6 +2047,14 @@ dependencies = [
  "tracing",
  "tracing-subscriber",
  "uuid",
+]
+
+[[package]]
+name = "mohawk-fsrs"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "serde",
 ]
 
 [[package]]

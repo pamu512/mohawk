@@ -9,17 +9,14 @@ on:
 jobs:
   rust:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: src-tauri
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
-        with:
-          workspaces: src-tauri
-      - name: cargo test
-        run: cargo test
+      - name: cargo fetch
+        run: cargo fetch
+      - name: cargo test --offline -p mohawk-fsrs
+        run: cargo test --offline -p mohawk-fsrs
 
   frontend:
     runs-on: ubuntu-latest
