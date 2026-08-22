@@ -11,6 +11,15 @@ use tracing_subscriber::EnvFilter;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    // Setup/window init runs inside tao's did_finish_launching (extern "C" / nounwind).
+    // Any panic there becomes panic_cannot_unwind → SIGABRT with a useless stack.
+    // Print the real payload first.
+    let default_hook = std::panic::take_hook();
+    std::panic::set_hook(Box::new(move |info| {
+        eprintln!("Mohawk panic: {info}");
+        default_hook(info);
+    }));
+
     tracing_subscriber::fmt()
         .with_env_filter(
             EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("info")),
@@ -19,16 +28,31 @@ pub fn run() {
 
     tauri::Builder::default()
         .setup(|app| {
+            // Returning Err from setup also panics inside did_finish_launching — exit instead.
             let handle = app.handle().clone();
 
-            let app_state = std::thread::spawn(move || {
+            let app_state = match std::thread::spawn(move || {
                 let rt = tokio::runtime::Runtime::new()
                     .map_err(|e| errors::AppError::InternalError(e.to_string()))?;
                 rt.block_on(AppState::init(&handle))
             })
             .join()
-            .map_err(|_| "database init thread panicked".to_string())?
-            .map_err(|e| e.to_string())?;
+            {
+                Ok(Ok(state)) => state,
+                Ok(Err(e)) => {
+                    eprintln!("Mohawk setup failed: {e}");
+                    eprintln!(
+                        "If this mentions missing/applied migrations, delete \
+                         ~/Library/Application Support/com.mohawk.app/mohawk.db \
+                         or rebuild so the binary includes all migrations under src-tauri/migrations."
+                    );
+                    std::process::exit(1);
+                }
+                Err(_) => {
+                    eprintln!("Mohawk setup failed: database init thread panicked");
+                    std::process::exit(1);
+                }
+            };
 
             app.manage(app_state);
             engine::sync_log::register_app(app.handle().clone());
