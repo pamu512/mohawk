@@ -532,13 +532,19 @@ pub fn strip_html(input: &str) -> String {
     let bytes = input.as_bytes();
 
     while i < bytes.len() {
+        // ponytail: byte-walk for ASCII tags; skip mid-UTF-8 so nbsp/etc. don't panic
+        if !lower.is_char_boundary(i) {
+            i += 1;
+            continue;
+        }
+
         if in_script {
             if lower[i..].starts_with("</script>") {
                 in_script = false;
                 i += "</script>".len();
                 continue;
             }
-            i += 1;
+            i += lower[i..].chars().next().map_or(1, char::len_utf8);
             continue;
         }
 
@@ -553,15 +559,22 @@ pub fn strip_html(input: &str) -> String {
         }
 
         match bytes[i] {
-            b'<' => in_tag = true,
+            b'<' => {
+                in_tag = true;
+                i += 1;
+            }
             b'>' => {
                 in_tag = false;
                 out.push(' ');
+                i += 1;
             }
-            c if !in_tag => out.push(c as char),
-            _ => {}
+            _ if !in_tag => {
+                let ch = input[i..].chars().next().unwrap_or('\0');
+                out.push(ch);
+                i += ch.len_utf8();
+            }
+            _ => i += 1,
         }
-        i += 1;
     }
 
     normalize_whitespace(&decode_xml_entities(&out))
@@ -692,6 +705,13 @@ mod tests {
     fn strip_html_removes_tags_and_scripts() {
         let raw = "<p>Hello <b>world</b></p><script>alert(1)</script><span>!</span>";
         assert_eq!(strip_html(raw), "Hello world !");
+    }
+
+    #[test]
+    fn strip_html_handles_multibyte_chars() {
+        // U+00A0 nbsp — previously panicked on byte-index string slices
+        let raw = "catalog\u{a0}<b>item</b>";
+        assert_eq!(strip_html(raw), "catalog item");
     }
 
     #[test]
