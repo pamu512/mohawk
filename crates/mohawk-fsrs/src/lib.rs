@@ -211,8 +211,13 @@ fn next_difficulty(difficulty: f64, rating: Rating, weights: &[f64; 21]) -> f64 
 }
 
 /// Mean reversion toward the initial difficulty of an Easy first rating.
+///
+/// py-fsrs parity: the reversion anchor is the *unclamped* initial-Easy
+/// difficulty (`_initial_difficulty(..., clamp=False)`); clamping it to
+/// D_MIN first (as `init_difficulty` does) skews every subsequent D update.
 fn mean_reversion(new_d: f64, weights: &[f64; 21]) -> f64 {
-    weights[7] * (init_difficulty(Rating::Easy, weights) - new_d) + new_d
+    let unclamped_d0_easy = weights[4] - (weights[5] * (Rating::Easy.as_f64() - 1.0)).exp() + 1.0;
+    weights[7] * (unclamped_d0_easy - new_d) + new_d
 }
 
 // --- Stability updates ---
@@ -275,7 +280,9 @@ pub fn step(
         stability_after_recall(last_s, last_d, r, rating, weights)
     };
 
-    if elapsed_days == 0.0 {
+    // py-fsrs parity: same-day reviews (elapsed < 1 day, truncated) use the
+    // short-term stability update, not the long-term recall/forget path.
+    if elapsed_days < 1.0 {
         new_s = stability_short_term(last_s, rating, weights);
     }
 
@@ -499,5 +506,59 @@ mod tests {
     fn rating_from_u8_rejects_invalid() {
         assert_eq!(Rating::from_u8(3), Some(Rating::Good));
         assert_eq!(Rating::from_u8(0), None);
+    }
+
+    /// Parity against the reference implementation (py-fsrs 4.x, FSRS-6,
+    /// identical DEFAULT_PARAMETERS, no fuzz). Reference S/D trajectory
+    /// generated 2026-09-14 by driving py-fsrs's Scheduler over its own
+    /// canonical test sequence (tests/test_basic.py::test_review_card):
+    /// ratings G,G,G,G,G,G,A,A,G,G,G,G,G reviewed exactly at each due date.
+    ///
+    /// Note: mohawk's phase machine is a deliberate simplification of py-fsrs's
+    /// learning-steps scheduler, so *intervals* are not expected to match —
+    /// memory-state (S/D) trajectories are the parity contract.
+    #[test]
+    fn parity_with_py_fsrs_reference_trajectory() {
+        // (rating, elapsed_days_at_review, expected S, expected D)
+        let cases: &[(u8, f64, f64, f64)] = &[
+            (3, 0.0, 2.3065, 2.118104),
+            (3, 0.00694444, 2.3065, 2.111214),
+            (3, 2.0, 10.971048, 2.104331),
+            (3, 11.0, 46.316858, 2.097455),
+            (3, 46.0, 162.999816, 2.090586),
+            (3, 163.0, 497.876555, 2.083724),
+            (1, 498.0, 6.890413, 7.383202),
+            (1, 0.00694444, 2.154598, 9.125105),
+            (3, 0.00694444, 2.154598, 9.111208),
+            (3, 2.0, 3.983123, 9.097325),
+            (3, 4.0, 7.236254, 9.083456),
+            (3, 7.0, 12.483044, 9.069601),
+            (3, 12.0, 20.770357, 9.05576),
+        ];
+
+        let params = FsrsParams::default();
+        let mut state = MemoryState {
+            stability: 0.0,
+            difficulty: 0.0,
+        };
+        for (i, (rating, elapsed, exp_s, exp_d)) in cases.iter().enumerate() {
+            state = step(
+                state,
+                *elapsed,
+                Rating::from_u8(*rating).unwrap(),
+                i == 0,
+                &params,
+            );
+            assert!(
+                (state.stability - exp_s).abs() < 1e-4,
+                "case {i}: parity: S = {}, expected {exp_s}",
+                state.stability
+            );
+            assert!(
+                (state.difficulty - exp_d).abs() < 1e-4,
+                "case {i}: parity: D = {}, expected {exp_d}",
+                state.difficulty
+            );
+        }
     }
 }

@@ -17,6 +17,8 @@ jobs:
         run: cargo fetch
       - name: cargo test --offline -p mohawk-fsrs
         run: cargo test --offline -p mohawk-fsrs
+      - name: cargo test --offline (src-tauri)
+        run: cargo test --offline --manifest-path src-tauri/Cargo.toml
 
   frontend:
     runs-on: ubuntu-latest
