@@ -500,4 +500,60 @@ mod tests {
         assert_eq!(Rating::from_u8(3), Some(Rating::Good));
         assert_eq!(Rating::from_u8(0), None);
     }
+
+    /// Parity against py-fsrs 6.3.2 (PyPI `fsrs==6.3.2`, FSRS-6, identical
+    /// DEFAULT_PARAMETERS, `enable_fuzzing=False`). Generated 2026-09-25 by
+    /// driving `Scheduler.review_card` over `tests/test_basic.py::TEST_RATINGS_1`
+    /// (`test_review_card`): G,G,G,G,G,G,A,A,G,G,G,G,G reviewed exactly at each
+    /// due date. py-fsrs 4.x is FSRS-5 (19 weights) and is not this trajectory;
+    /// FSRS-6 lives in py-fsrs 6.x — pin 6.3.2 so drift is explicit.
+    ///
+    /// Same-day learning/relearning steps are 10 minutes (`0.00694444` days).
+    /// Mohawk's phase machine is a deliberate simplification of py-fsrs's
+    /// learning-steps scheduler, so *intervals* are not expected to match —
+    /// memory-state (S/D) trajectories are the parity contract.
+    #[test]
+    fn parity_with_py_fsrs_reference_trajectory() {
+        // (rating, elapsed_days_at_review, expected S, expected D)
+        let cases: &[(u8, f64, f64, f64)] = &[
+            (3, 0.0, 2.3065, 2.118104),
+            (3, 0.00694444, 2.3065, 2.111214),
+            (3, 2.0, 10.971048, 2.104331),
+            (3, 11.0, 46.316858, 2.097455),
+            (3, 46.0, 162.999816, 2.090586),
+            (3, 163.0, 497.876555, 2.083724),
+            (1, 498.0, 6.890413, 7.383202),
+            (1, 0.00694444, 2.154598, 9.125105),
+            (3, 0.00694444, 2.154598, 9.111208),
+            (3, 2.0, 3.983123, 9.097325),
+            (3, 4.0, 7.236254, 9.083456),
+            (3, 7.0, 12.483044, 9.069601),
+            (3, 12.0, 20.770357, 9.05576),
+        ];
+
+        let params = FsrsParams::default();
+        let mut state = MemoryState {
+            stability: 0.0,
+            difficulty: 0.0,
+        };
+        for (i, (rating, elapsed, exp_s, exp_d)) in cases.iter().enumerate() {
+            state = step(
+                state,
+                *elapsed,
+                Rating::from_u8(*rating).unwrap(),
+                i == 0,
+                &params,
+            );
+            assert!(
+                (state.stability - exp_s).abs() < 1e-4,
+                "case {i}: parity: S = {}, expected {exp_s}",
+                state.stability
+            );
+            assert!(
+                (state.difficulty - exp_d).abs() < 1e-4,
+                "case {i}: parity: D = {}, expected {exp_d}",
+                state.difficulty
+            );
+        }
+    }
 }
