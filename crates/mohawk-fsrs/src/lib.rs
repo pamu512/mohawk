@@ -211,8 +211,13 @@ fn next_difficulty(difficulty: f64, rating: Rating, weights: &[f64; 21]) -> f64 
 }
 
 /// Mean reversion toward the initial difficulty of an Easy first rating.
+///
+/// py-fsrs parity: the reversion anchor is the *unclamped* initial-Easy
+/// difficulty (`_initial_difficulty(..., clamp=False)`); clamping it to
+/// D_MIN first (as `init_difficulty` does) skews every subsequent D update.
 fn mean_reversion(new_d: f64, weights: &[f64; 21]) -> f64 {
-    weights[7] * (init_difficulty(Rating::Easy, weights) - new_d) + new_d
+    let unclamped_d0_easy = weights[4] - (weights[5] * (Rating::Easy.as_f64() - 1.0)).exp() + 1.0;
+    weights[7] * (unclamped_d0_easy - new_d) + new_d
 }
 
 // --- Stability updates ---
@@ -275,7 +280,9 @@ pub fn step(
         stability_after_recall(last_s, last_d, r, rating, weights)
     };
 
-    if elapsed_days == 0.0 {
+    // py-fsrs parity: same-day reviews (elapsed < 1 day, truncated) use the
+    // short-term stability update, not the long-term recall/forget path.
+    if elapsed_days < 1.0 {
         new_s = stability_short_term(last_s, rating, weights);
     }
 
