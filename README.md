@@ -67,4 +67,4 @@ Set `RUST_LOG=debug` before launch for structured backend tracing.
 
 ## License
 
-Private / local use — see repository owner for terms.
+MIT — see [LICENSE](LICENSE).
