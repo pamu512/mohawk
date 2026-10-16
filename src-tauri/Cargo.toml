@@ -7,7 +7,7 @@ edition = "2021"
 rust-version = "1.77"
 
 # Own workspace so this Tauri package is not captured by the repo-root
-# mohawk-fsrs workspace (that crate must stay free of tauri/glib).
+# domain workspace (mohawk-fsrs / mohawk-sandbox must stay free of tauri/glib).
 [workspace]
 
 [lib]
@@ -19,6 +19,7 @@ tauri-build = { version = "2", features = [] }
 
 [dependencies]
 mohawk-fsrs = { path = "../crates/mohawk-fsrs" }
+mohawk-sandbox = { path = "../crates/mohawk-sandbox" }
 tauri = { version = "2", features = ["wry"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"

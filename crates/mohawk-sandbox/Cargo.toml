@@ -1,0 +1,9 @@
+[package]
+name = "mohawk-sandbox"
+version = "0.1.0"
+edition = "2021"
+description = "Sandbox evaluator (IF/THEN rules and challenge validation) used by Mohawk"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
