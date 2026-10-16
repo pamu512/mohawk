@@ -9,7 +9,20 @@ use std::time::Instant;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-use crate::errors::{AppError, AppResult};
+/// Thin crate-local error (mapped to AppError at the src-tauri command boundary).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct InternalError(pub String);
+
+impl std::fmt::Display for InternalError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(&self.0)
+    }
+}
+
+impl std::error::Error for InternalError {}
+
+pub type Result<T> = std::result::Result<T, InternalError>;
+
 
 const MOCK_PAYLOAD_COUNT: usize = 500;
 
@@ -232,7 +245,7 @@ fn validate_r(submission: &str) -> ValidationOutcome {
 pub fn evaluate_challenge(
     submission: &str,
     language: ChallengeLanguage,
-) -> AppResult<SandboxResult> {
+) -> Result<SandboxResult> {
     evaluate_challenge_against(submission, language, mock_payloads())
 }
 
@@ -240,7 +253,7 @@ pub fn evaluate_challenge_against(
     submission: &str,
     language: ChallengeLanguage,
     payloads: &[String],
-) -> AppResult<SandboxResult> {
+) -> Result<SandboxResult> {
     let start = Instant::now();
     let validation = validate_submission(language, submission);
 
@@ -448,7 +461,7 @@ enum CompareOp {
 }
 
 impl CompareOp {
-    fn parse(token: &str) -> AppResult<Self> {
+    fn parse(token: &str) -> Result<Self> {
         match token {
             ">" => Ok(Self::Gt),
             ">=" => Ok(Self::Gte),
@@ -456,7 +469,7 @@ impl CompareOp {
             "<=" => Ok(Self::Lte),
             "==" => Ok(Self::Eq),
             "!=" => Ok(Self::Ne),
-            other => Err(AppError::InternalError(format!("unknown operator: {other}"))),
+            other => Err(InternalError(format!("unknown operator: {other}"))),
         }
     }
 
@@ -501,7 +514,7 @@ struct Rule {
 pub fn evaluate_transactions(
     transactions: &[String],
     rule_definition: &str,
-) -> AppResult<EvaluationReport> {
+) -> Result<EvaluationReport> {
     let rule = parse_rule(rule_definition)?;
     let start = Instant::now();
     let total = transactions.len() as u32;
@@ -646,28 +659,28 @@ fn condition_matches(txn: &Value, cond: &Condition) -> bool {
     cond.op.eval(field_value, &cond.value)
 }
 
-fn parse_rule(input: &str) -> AppResult<Rule> {
+fn parse_rule(input: &str) -> Result<Rule> {
     let normalized = collapse_spaces(input.trim());
     let upper = normalized.to_uppercase();
 
     let then_idx = upper
         .find(" THEN ")
-        .ok_or_else(|| AppError::InternalError("rule must contain THEN clause".into()))?;
+        .ok_or_else(|| InternalError("rule must contain THEN clause".into()))?;
     let (cond_section, action_section) = normalized.split_at(then_idx);
     let action_section = action_section[" THEN ".len()..].trim();
 
     let cond_body = cond_section
         .strip_prefix("IF ")
         .or_else(|| cond_section.strip_prefix("if "))
-        .ok_or_else(|| AppError::InternalError("rule must start with IF".into()))?;
+        .ok_or_else(|| InternalError("rule must start with IF".into()))?;
 
     let conditions = cond_body
         .split(" AND ")
         .map(parse_condition)
-        .collect::<AppResult<Vec<_>>>()?;
+        .collect::<Result<Vec<_>>>()?;
 
     if conditions.is_empty() {
-        return Err(AppError::InternalError(
+        return Err(InternalError(
             "rule must include at least one condition".into(),
         ));
     }
@@ -681,14 +694,14 @@ fn parse_rule(input: &str) -> AppResult<Rule> {
     })
 }
 
-fn parse_condition(segment: &str) -> AppResult<Condition> {
+fn parse_condition(segment: &str) -> Result<Condition> {
     let segment = segment.trim();
     for op_token in [">=", "<=", "!=", "==", ">", "<"] {
         if let Some(idx) = segment.find(op_token) {
             let field = segment[..idx].trim().to_string();
             let value_raw = segment[idx + op_token.len()..].trim();
             if field.is_empty() {
-                return Err(AppError::InternalError(format!(
+                return Err(InternalError(format!(
                     "missing field in condition: {segment}"
                 )));
             }
@@ -699,27 +712,27 @@ fn parse_condition(segment: &str) -> AppResult<Condition> {
             });
         }
     }
-    Err(AppError::InternalError(format!(
+    Err(InternalError(format!(
         "could not parse condition: {segment}"
     )))
 }
 
-fn parse_assignment(segment: &str) -> AppResult<(String, Value)> {
+fn parse_assignment(segment: &str) -> Result<(String, Value)> {
     let Some((field, value_raw)) = segment.split_once('=') else {
-        return Err(AppError::InternalError(format!(
+        return Err(InternalError(format!(
             "THEN clause must assign with '=': {segment}"
         )));
     };
     let field = field.trim().to_string();
     if field.is_empty() {
-        return Err(AppError::InternalError(
+        return Err(InternalError(
             "THEN assignment missing field name".into(),
         ));
     }
     Ok((field, parse_literal(value_raw.trim())?))
 }
 
-fn parse_literal(raw: &str) -> AppResult<Value> {
+fn parse_literal(raw: &str) -> Result<Value> {
     let raw = raw.trim();
     if raw.eq_ignore_ascii_case("true") {
         return Ok(Value::Bool(true));
@@ -739,10 +752,10 @@ fn parse_literal(raw: &str) -> AppResult<Value> {
         return Ok(
             serde_json::Number::from_f64(float)
                 .map(Value::Number)
-                .ok_or_else(|| AppError::InternalError(format!("invalid number: {raw}")))?,
+                .ok_or_else(|| InternalError(format!("invalid number: {raw}")))?,
         );
     }
-    Err(AppError::InternalError(format!("invalid literal: {raw}")))
+    Err(InternalError(format!("invalid literal: {raw}")))
 }
 
 fn collapse_spaces(input: &str) -> String {

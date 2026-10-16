@@ -228,7 +228,7 @@ pub async fn execute_sandbox_rules(
     .await
     .map_err(|e| AppError::InternalError(format!("sandbox worker failed: {e}")))?;
     state.end_background_task();
-    report
+    report.map_err(AppError::from)
 }
 
 /// Generate flashcards from raw text via a local Ollama/LM Studio instance.

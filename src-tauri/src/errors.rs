@@ -45,6 +45,12 @@ impl Serialize for AppError {
 
 pub type AppResult<T> = Result<T, AppError>;
 
+impl From<mohawk_sandbox::InternalError> for AppError {
+    fn from(err: mohawk_sandbox::InternalError) -> Self {
+        Self::InternalError(err.0)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

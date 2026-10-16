@@ -49,8 +49,9 @@ Staged courses survive app restarts (stored in SQLite).
 | `npm run lint` | ESLint |
 | `npm test` | Vitest unit tests |
 | `cargo test -p mohawk-fsrs` | FSRS domain unit tests (workspace crate `mohawk-fsrs`; no Tauri) |
+| `cargo test -p mohawk-sandbox` | Sandbox evaluator unit tests (workspace crate `mohawk-sandbox`; no Tauri) |
 
-CI rust runs `cargo fetch` then `cargo test --offline -p mohawk-fsrs`. That job does not compile `src-tauri` / `mohawk_lib`.
+CI rust runs `cargo fetch` then `cargo test --offline -p mohawk-fsrs` and `cargo test --offline -p mohawk-sandbox`. That job does not compile `src-tauri` / `mohawk_lib`.
 
 ## Configuration
 
@@ -63,6 +64,7 @@ Set `RUST_LOG=debug` before launch for structured backend tracing.
 - **Frontend:** React + Vite + Tailwind (`src/`)
 - **Backend:** Rust + Tauri 2 + sqlx/SQLite (`src-tauri/`)
 - **FSRS math:** `crates/mohawk-fsrs` (chrono + serde only)
+- **Sandbox evaluator:** `crates/mohawk-sandbox` (serde + serde_json only)
 - **Sync:** HTTPS RSS allowlist → chunk → Ollama JSON extraction → analyst review → persist
 
 ## License
