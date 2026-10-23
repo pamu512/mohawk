@@ -329,7 +329,10 @@ pub fn interval_days(stability: f64, params: &FsrsParams) -> f64 {
     s / factor(w) * (params.desired_retention.powf(1.0 / decay(w)) - 1.0)
 }
 
-/// Clamp and round an interval to whole days for scheduling.
+/// Round `raw_days` to a whole day, then clamp to `[1, maximum_interval]`.
+///
+/// The 1-day floor is the scheduled-interval contract: this function does not
+/// emit minute-scale learning-step intervals.
 pub fn clamp_interval_days(raw_days: f64, params: &FsrsParams) -> f64 {
     raw_days
         .round()
@@ -562,5 +565,61 @@ mod tests {
                 state.difficulty
             );
         }
+    }
+
+    fn clamp_params(maximum_interval: u32) -> FsrsParams {
+        FsrsParams {
+            maximum_interval,
+            ..FsrsParams::default()
+        }
+    }
+
+    /// Current contract: `raw.round().clamp(1.0, maximum_interval as f64)`.
+    /// `f64::round` is half away from zero. Do not change that sequence.
+    #[test]
+    fn clamp_interval_days_is_round_then_clamp() {
+        let params = clamp_params(30);
+        let samples: [f64; 17] = [
+            -2.0, -0.4, 0.0, 0.4, 0.5, 0.6, 1.0, 1.4, 1.5, 2.49, 2.5, 29.4, 29.5, 30.0, 30.4, 30.5,
+            100.0,
+        ];
+        for raw in samples {
+            let expected = raw.round().clamp(1.0, params.maximum_interval as f64);
+            assert_eq!(clamp_interval_days(raw, &params), expected, "raw={raw}");
+        }
+    }
+
+    #[test]
+    fn clamp_interval_days_floors_to_one_day() {
+        let params = clamp_params(365);
+        for raw in [-10.0, -0.1, 0.0, 0.4, 0.49] {
+            assert_eq!(clamp_interval_days(raw, &params), 1.0, "raw={raw}");
+        }
+        // 0.5 rounds to 1.0 (half away from zero); still the 1-day floor, no raise.
+        assert_eq!(clamp_interval_days(0.5, &params), 1.0);
+    }
+
+    #[test]
+    fn clamp_interval_days_caps_at_maximum_interval() {
+        let params = clamp_params(30);
+        assert_eq!(clamp_interval_days(30.0, &params), 30.0);
+        assert_eq!(clamp_interval_days(30.4, &params), 30.0);
+        // Rounds to 31 first, then the max clamp pulls it back.
+        assert_eq!(clamp_interval_days(30.5, &params), 30.0);
+        assert_eq!(clamp_interval_days(100.0, &params), 30.0);
+
+        let default_params = FsrsParams::default();
+        assert_eq!(default_params.maximum_interval, 36_500);
+        assert_eq!(clamp_interval_days(40_000.0, &default_params), 36_500.0);
+    }
+
+    #[test]
+    fn clamp_interval_days_passes_in_range_after_round() {
+        let params = clamp_params(365);
+        assert_eq!(clamp_interval_days(1.0, &params), 1.0);
+        assert_eq!(clamp_interval_days(1.4, &params), 1.0);
+        assert_eq!(clamp_interval_days(1.5, &params), 2.0);
+        assert_eq!(clamp_interval_days(10.0, &params), 10.0);
+        assert_eq!(clamp_interval_days(365.0, &params), 365.0);
     }
 }
