@@ -19,6 +19,7 @@ tauri-build = { version = "2", features = [] }
 
 [dependencies]
 mohawk-fsrs = { path = "../crates/mohawk-fsrs" }
+mohawk-ingest = { path = "../crates/mohawk-ingest" }
 mohawk-sandbox = { path = "../crates/mohawk-sandbox" }
 tauri = { version = "2", features = ["wry"] }
 serde = { version = "1", features = ["derive"] }
