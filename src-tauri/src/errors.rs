@@ -51,6 +51,12 @@ impl From<mohawk_sandbox::InternalError> for AppError {
     }
 }
 
+impl From<mohawk_ingest::IngestError> for AppError {
+    fn from(err: mohawk_ingest::IngestError) -> Self {
+        Self::InternalError(err.0)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

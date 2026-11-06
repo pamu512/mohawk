@@ -157,6 +157,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "mohawk-ingest"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "serde",
+]
+
+[[package]]
 name = "mohawk-sandbox"
 version = "0.1.0"
 dependencies = [

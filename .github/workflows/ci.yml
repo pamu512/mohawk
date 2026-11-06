@@ -19,6 +19,8 @@ jobs:
         run: cargo test --offline -p mohawk-fsrs
       - name: cargo test --offline -p mohawk-sandbox
         run: cargo test --offline -p mohawk-sandbox
+      - name: cargo test --offline -p mohawk-ingest
+        run: cargo test --offline -p mohawk-ingest
 
   frontend:
     runs-on: ubuntu-latest

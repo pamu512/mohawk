@@ -2036,6 +2036,7 @@ dependencies = [
  "chrono",
  "futures-util",
  "mohawk-fsrs",
+ "mohawk-ingest",
  "mohawk-sandbox",
  "reqwest 0.12.28",
  "serde",
@@ -2052,6 +2053,14 @@ dependencies = [
 
 [[package]]
 name = "mohawk-fsrs"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "serde",
+]
+
+[[package]]
+name = "mohawk-ingest"
 version = "0.1.0"
 dependencies = [
  "chrono",

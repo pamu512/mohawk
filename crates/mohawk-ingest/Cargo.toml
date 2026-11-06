@@ -1,0 +1,9 @@
+[package]
+name = "mohawk-ingest"
+version = "0.1.0"
+edition = "2021"
+description = "Pure feed parsing, HTML stripping, and prose chunking used by Mohawk's Threat Intel Desk ingest"
+
+[dependencies]
+chrono = "0.4"
+serde = { version = "1", features = ["derive"] }
