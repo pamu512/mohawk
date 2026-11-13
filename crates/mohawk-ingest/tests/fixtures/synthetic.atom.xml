@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Synthetic Atom fixture for parse_rss_or_atom / parse_atom_entries.
+     Not a captured live feed: 2026-11-13 probes of allowlisted sources
+     found working feeds to be RSS 2.0, none Atom. -->
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Mohawk synthetic Atom fixture</title>
+  <id>tag:mohawk.local,2026:synthetic-atom-feed</id>
+  <updated>2026-11-13T00:00:00Z</updated>
+  <entry>
+    <title>Synthetic Atom Entry One</title>
+    <id>tag:mohawk.local,2026:synthetic-atom-entry-1</id>
+    <updated>2026-11-13T00:00:00Z</updated>
+    <summary>Synthetic Atom summary used only for parser coverage.</summary>
+  </entry>
+  <entry>
+    <title>Synthetic Atom Entry Two</title>
+    <id>tag:mohawk.local,2026:synthetic-atom-entry-2</id>
+    <updated>2026-11-13T00:00:00Z</updated>
+    <content type="html">&lt;p&gt;Synthetic Atom HTML content.&lt;/p&gt;</content>
+  </entry>
+</feed>

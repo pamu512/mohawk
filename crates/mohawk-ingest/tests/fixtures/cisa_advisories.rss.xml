@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Trimmed public CISA advisories RSS from
+  https://www.cisa.gov/cybersecurity-advisories/all.xml
+  (RSS 2.0, xmlns:dc, escaped-HTML descriptions).
+  Channel envelope plus the first three entries of Wayback snapshot
+  20241127232627. The live feed is multi-megabyte; this file is not a
+  synthetic SAMPLE_RSS stand-in.
+-->
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0" xml:base="https://www.cisa.gov/">
+  <channel>
+    <title>All CISA Advisories</title>
+    <link>https://www.cisa.gov/</link>
+    <description/>
+    <language>en</language>
+    
+    <item>
+  <title>Hitachi Energy MicroSCADA Pro/X SYS600</title>
+  <link>https://www.cisa.gov/news-events/ics-advisories/icsa-24-331-04</link>
+  <description>&lt;p&gt;&lt;a href="https://github.com/cisagov/CSAF" target="_blank"&gt;&lt;strong&gt;View CSAF&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id="1-executive-summary"&gt;1. EXECUTIVE SUMMARY&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;CVSS v3 9.9&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;ATTENTION&lt;/strong&gt;: Exploitable remotely/low attack complexity&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Vendor&lt;/strong&gt;: Hitachi Energy&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Equipment&lt;/strong&gt;: MicroSCADA Pro/X SYS600&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Vulnerabilities&lt;/strong&gt;: Improper Neutralization of Special Elements in Data Query Logic, Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal'), Authentication Bypass by Capture-replay, Missing Authentication for Critical Function, URL Redirection to Untrusted Site ('Open Redirect')&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="2-risk-evaluation"&gt;2. RISK EVALUATION&lt;/h2&gt;
+&lt;p&gt;Successful exploitation of these vulnerabilities could allow an attacker to inject code towards persistent data, manipulate the file system, hijack a session, or engage in phishing attempts against users.&lt;/p&gt;
+&lt;h2 id="3-technical-details"&gt;3. TECHNICAL DETAILS&lt;/h2&gt;
+&lt;h3 id="31-affected-products"&gt;3.1 AFFECTED PRODUCTS&lt;/h3&gt;
+&lt;p&gt;The following Hitachi Energy products are affected:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Hitachi Energy MicroSCADA Pro/X SYS600: Version 10.0 to Version 10.5 (CVE-2024-4872, CVE-2024-3980, CVE-2024-3982, CVE-2024-7941)&lt;/li&gt;
+&lt;li&gt;Hitachi Energy MicroSCADA Pro/X SYS600: Version 10.2 to Version 10.5 (CVE-2024-7940)&lt;/li&gt;
+&lt;li&gt;Hitachi Energy MicroSCADA Pro/X SYS600: Version 10.5 (CVE-2024-7941)&lt;/li&gt;
+&lt;li&gt;Hitachi Energy MicroSCADA Pro/X SYS600: Version 9.4 FP1 (CVE-2024-3980)&lt;/li&gt;
+&lt;li&gt;Hitachi Energy MicroSCADA Pro/X SYS600: Version 9.4 FP2 HF1 to Version 9.4 FP2 HF5 (CVE-2024-4872, CVE-2024-3980)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="32-vulnerability-overview"&gt;3.2 Vulnerability Overview&lt;/h3&gt;
+&lt;h4 id="321-improper-neutralization-of-special-elements-in-data-query-logic-cwe-943"&gt;&lt;strong&gt;3.2.1 &lt;/strong&gt;&lt;a href="https://cwe.mitre.org/data/definitions/943.html" target="_blank"&gt;&lt;strong&gt;IMPROPER NEUTRALIZATION OF SPECIAL ELEMENTS IN DATA QUERY LOGIC CWE-943&lt;/strong&gt;&lt;/a&gt;&lt;/h4&gt;
+&lt;p&gt;A vulnerability exists in the query validation of the MicroSCADA Pro/X SYS600 product. If exploited this could allow an authenticated attacker to inject code towards persistent data. Note that to successfully exploit this vulnerability an attacker must have a valid credential.&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://www.cve.org/CVERecord?id=CVE-2024-4872" target="_blank"&gt;CVE-2024-4872&lt;/a&gt; has been assigned to this vulnerability. A CVSS v3 base score of 9.9 has been assigned; the CVSS vector string is (&lt;a href="https://www.first.org/cvss/calculator/3.1#CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H" target="_blank"&gt;CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H&lt;/a&gt;).&lt;/p&gt;
+&lt;h4 id="322-improper-limitation-of-a-pathname-to-a-restricted-directory-path-traversal-cwe-22"&gt;&lt;strong&gt;3.2.2 &lt;/strong&gt;&lt;a href="https://cwe.mitre.org/data/definitions/22.html" target="_blank"&gt;&lt;strong&gt;IMPROPER LIMITATION OF A PATHNAME TO A RESTRICTED DIRECTORY ('PATH TRAVERSAL') CWE-22&lt;/strong&gt;&lt;/a&gt;&lt;/h4&gt;
+&lt;p&gt;The MicroSCADA Pro/X SYS600 product allows an authenticated user input to control or influence paths or file names that are used in filesystem operations. If exploited the vulnerability allows the attacker to access or modify system files or other files that are critical to the application.&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://www.cve.org/CVERecord?id=CVE-2024-3980" target="_blank"&gt;CVE-2024-3980&lt;/a&gt; has been assigned to this vulnerability. A CVSS v3 base score of 8.8 has been assigned; the CVSS vector string is (&lt;a href="https://www.first.org/cvss/calculator/3.1#CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H" target="_blank"&gt;CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H&lt;/a&gt;).&lt;/p&gt;
+&lt;h4 id="323-authentication-bypass-by-capture-replay-cwe-294"&gt;&lt;strong&gt;3.2.3 &lt;/strong&gt;&lt;a href="https://cwe.mitre.org/data/definitions/294.html" target="_blank"&gt;&lt;strong&gt;AUTHENTICATION BYPASS BY CAPTURE-REPLAY CWE-294&lt;/strong&gt;&lt;/a&gt;&lt;/h4&gt;
+&lt;p&gt;An attacker with local access to a machine where MicroSCADA X SYS600 is installed could enable session logging and try to exploit a session hijacking of an already established session. By default, the session logging level is not enabled and only users with administrator rights can enable it.&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://www.cve.org/CVERecord?id=CVE-2024-3982" target="_blank"&gt;CVE-2024-3982&lt;/a&gt; has been assigned to this vulnerability. A CVSS v3 base score of 8.2 has been assigned; the CVSS vector string is (&lt;a href="https://www.first.org/cvss/calculator/3.1#CVSS:3.1/AV:L/AC:L/PR:H/UI:N/S:C/C:H/I:H/A:H" target="_blank"&gt;CVSS:3.1/AV:L/AC:L/PR:H/UI:N/S:C/C:H/I:H/A:H&lt;/a&gt;).&lt;/p&gt;
+&lt;h4 id="324-missing-authentication-for-critical-function-cwe-306"&gt;&lt;strong&gt;3.2.4 &lt;/strong&gt;&lt;a href="https://cwe.mitre.org/data/definitions/306.html" target="_blank"&gt;&lt;strong&gt;MISSING AUTHENTICATION FOR CRITICAL FUNCTION CWE-306&lt;/strong&gt;&lt;/a&gt;&lt;/h4&gt;
+&lt;p&gt;The product exposes a service that is intended for local only to all network interfaces without any authentication.&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://www.cve.org/CVERecord?id=CVE-2024-7940" target="_blank"&gt;CVE-2024-7940&lt;/a&gt; has been assigned to this vulnerability. A CVSS v3 base score of 8.3 has been assigned; the CVSS vector string is (&lt;a href="https://www.first.org/cvss/calculator/3.1#CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:C/C:H/I:H/A:H" target="_blank"&gt;CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:C/C:H/I:H/A:H&lt;/a&gt;).&lt;/p&gt;
+&lt;h4 id="325-url-redirection-to-untrusted-site-open-redirect-cwe-601"&gt;&lt;strong&gt;3.2.5 &lt;/strong&gt;&lt;a href="https://cwe.mitre.org/data/definitions/601.html" target="_blank"&gt;&lt;strong&gt;URL REDIRECTION TO UNTRUSTED SITE ('OPEN REDIRECT') CWE-601&lt;/strong&gt;&lt;/a&gt;&lt;/h4&gt;
+&lt;p&gt;A HTTP parameter may contain a URL value and could cause the web application to redirect the request to the specified URL. By modifying the URL value to a malicious site, an attacker may successfully launch a phishing scam and steal user credentials.&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://www.cve.org/CVERecord?id=CVE-2024-7941" target="_blank"&gt;CVE-2024-7941&lt;/a&gt; has been assigned to this vulnerability. A CVSS v3 base score of 4.3 has been assigned; the CVSS vector string is (&lt;a href="https://www.first.org/cvss/calculator/3.1#CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:L/A:N" target="_blank"&gt;CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:L/A:N&lt;/a&gt;).&lt;/p&gt;
+&lt;h3 id="33-product-impact"&gt;3.3 PRODUCT IMPACT&lt;/h3&gt;
+&lt;p&gt;Product-specific impact for an affected product vulnerable to the CVE:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;CVE-2024-4872
+&lt;ul&gt;
+&lt;li&gt;(Hitachi Energy MicroSCADA Pro/X SYS600): A CVSS v3 base score of 9.9 has been assigned; the CVSS vector string is (&lt;a href="https://www.first.org/cvss/calculator/3.1#CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H" target="_blank"&gt;CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H&lt;/a&gt;).&lt;/li&gt;
+&lt;li&gt;(Hitachi Energy MicroSCADA Pro/X SYS600): A CVSS v3 base score of 8.8 has been assigned; the CVSS vector string is (&lt;a href="https://www.first.org/cvss/calculator/3.1#CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H" target="_blank"&gt;CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H&lt;/a&gt;).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;CVE-2024-3980
+&lt;ul&gt;
+&lt;li&gt;(Hitachi Energy MicroSCADA Pro/X SYS600): A CVSS v3 base score of 9.9 has been assigned; the CVSS vector string is (&lt;a href="https://www.first.org/cvss/calculator/3.1#CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H" target="_blank"&gt;CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H&lt;/a&gt;).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="34-background"&gt;3.4 BACKGROUND&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;CRITICAL INFRASTRUCTURE SECTORS:&lt;/strong&gt; Critical Manufacturing&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;COUNTRIES/AREAS DEPLOYED:&lt;/strong&gt; Worldwide&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;COMPANY HEADQUARTERS LOCATION:&lt;/strong&gt; Switzerland&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="35-researcher"&gt;3.5 RESEARCHER&lt;/h3&gt;
+&lt;p&gt;Hitachi Energy PSIRT reported these vulnerabilities to CISA.&lt;/p&gt;
+&lt;h2 id="4-mitigations"&gt;4. MITIGATIONS&lt;/h2&gt;
+&lt;p&gt;Hitachi Energy has identified the following specific workarounds and mitigations users can apply to reduce risk:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Hitachi Energy MicroSCADA X SYS600: Update to Version 10.6&lt;/li&gt;
+&lt;li&gt;(CVE-2024-4872, CVE-2024-3980) Hitachi Energy MicroSCADA Pro SYS600: Apply Patch 9.4 FP2 HF6 (Installation of previous FP2 hotfixes are required prior to the installation of HF6)&lt;/li&gt;
+&lt;li&gt;(CVE-2024-4872, CVE-2024-3980) Hitachi Energy MicroSCADA X SYS600, Hitachi Energy MicroSCADA Pro SYS600: Follow the general mitigation factors below.&lt;/li&gt;
+&lt;li&gt;(CVE-2024-3982, CVE-2024-7940, CVE-2024-7941) Hitachi Energy MicroSCADA X SYS600: Follow the general mitigation factors below.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Hitachi Energy recommends the following security practices and firewall configurations to help protect process control networks from attacks that originate from outside the network:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Ensure process control systems are physically protected from direct access by unauthorized personnel, have no direct connections to the Internet, and are separated from other networks by means of a firewall system that has a minimal number of ports exposed.&lt;/li&gt;
+&lt;li&gt;Process control systems should not be used for Internet&lt;br&gt;surfing, instant messaging, or receiving e-mails.&lt;/li&gt;
+&lt;li&gt;Portable computers and removable storage media should be carefully scanned for viruses before they are connected to a control system.&lt;/li&gt;
+&lt;li&gt;Proper password policies and processes should be followed.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;For detailed mitigation strategies, users can approach their Hitachi Energy organization contact.&lt;/p&gt;
+&lt;p&gt;Hitachi Electric highly recommends deploying the product following the "MicroSCADA cybersecurity deployment guideline" document. Users should maintain their systems with products running on supported versions and follow maintenance releases.&lt;/p&gt;
+&lt;p&gt;For more information, see Hitachi Energy Cybersecurity Advisory &lt;a href="https://publisher.hitachienergy.com/preview?DocumentID=8dbd000160&amp;amp;LanguageCode=en&amp;amp;DocumentPartId=&amp;amp;Action=Launch" target="_blank"&gt;"Multiple vulnerabilities in Hitachi Energy MicroSCADA Pro/X SYS600 product"&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;CISA recommends users take defensive measures to minimize the risk of exploitation of these vulnerabilities. CISA reminds organizations to perform proper impact analysis and risk assessment prior to deploying defensive measures.&lt;/p&gt;
+&lt;p&gt;CISA also provides a section for &lt;a href="https://www.cisa.gov/resources-tools/resources/ics-recommended-practices" target="_blank"&gt;control systems security recommended practices&lt;/a&gt; on the ICS webpage on &lt;a href="https://www.cisa.gov/topics/industrial-control-systems" target="_blank"&gt;cisa.gov&lt;/a&gt;. Several CISA products detailing cyber defense best practices are available for reading and download, including &lt;a href="https://us-cert.cisa.gov/sites/default/files/recommended_practices/NCCIC_ICS-CERT_Defense_in_Depth_2016_S508C.pdf" target="_blank"&gt;Improving Industrial Control Systems Cybersecurity with Defense-in-Depth Strategies&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;CISA encourages organizations to implement recommended cybersecurity strategies for &lt;a href="https://www.cisa.gov/sites/default/files/publications/Cybersecurity_Best_Practices_for_Industrial_Control_Systems.pdf" target="_blank"&gt;proactive defense of ICS assets&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Additional mitigation guidance and recommended practices are publicly available on the ICS webpage at &lt;a href="https://www.cisa.gov/topics/industrial-control-systems" target="_blank"&gt;cisa.gov&lt;/a&gt; in the technical information paper, &lt;a href="https://www.cisa.gov/uscert/ics/tips/ICS-TIP-12-146-01B" target="_blank"&gt;ICS-TIP-12-146-01B--Targeted Cyber Intrusion Detection and Mitigation Strategies&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Organizations observing suspected malicious activity should follow established internal procedures and report findings to CISA for tracking and correlation against other incidents.&lt;/p&gt;
+&lt;p&gt;CISA also recommends users take the following measures to protect themselves from social engineering attacks:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Do not click web links or open attachments in unsolicited email messages.&lt;/li&gt;
+&lt;li&gt;Refer to &lt;a href="https://www.cisa.gov/uscert/sites/default/files/publications/emailscams0905.pdf" target="_blank"&gt;Recognizing and Avoiding Email Scams&lt;/a&gt; for more information on avoiding email scams.&lt;/li&gt;
+&lt;li&gt;Refer to &lt;a href="https://www.cisa.gov/uscert/ncas/tips/ST04-014" target="_blank"&gt;Avoiding Social Engineering and Phishing Attacks&lt;/a&gt; for more information on social engineering attacks.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;No known public exploitation specifically targeting these vulnerabilities has been reported to CISA at this time.&lt;/p&gt;
+&lt;h2 id="5-update-history"&gt;5. UPDATE HISTORY&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;November 26, 2024: Initial Publication&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+  <pubDate>Tue, 26 Nov 24 12:00:00 +0000</pubDate>
+    <dc:creator>CISA</dc:creator>
+    <guid isPermaLink="false">/node/22627</guid>
+    </item>
+<item>
+  <title>Schneider Electric EcoStruxure Control Expert, EcoStruxure Process Expert, and Modicon M340, M580 and M580 Safety PLCs</title>
+  <link>https://www.cisa.gov/news-events/ics-advisories/icsa-24-331-03</link>
+  <description>&lt;p&gt;&lt;a href="https://github.com/cisagov/CSAF" target="_blank"&gt;&lt;strong&gt;View CSAF&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id="1-executive-summary"&gt;1. EXECUTIVE SUMMARY&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;CVSS v3 8.1&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;ATTENTION&lt;/strong&gt;: Exploitable remotely&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Vendor&lt;/strong&gt;: Schneider Electric&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Equipment&lt;/strong&gt;: EcoStruxure Control Expert, EcoStruxure Process Expert and Modicon M340, M580 and M580 Safety PLCs&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Vulnerabilities&lt;/strong&gt;: Improper Enforcement of Message Integrity During Transmission in a Communication Channel, Use of Hard-coded Credentials, Insufficiently Protected Credentials&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="2-risk-evaluation"&gt;2. RISK EVALUATION&lt;/h2&gt;
+&lt;p&gt;Successful exploitation of these vulnerabilities could allow a denial of service, a loss of confidentiality, and threaten the integrity of controllers.&lt;/p&gt;
+&lt;h2 id="3-technical-details"&gt;3. TECHNICAL DETAILS&lt;/h2&gt;
+&lt;h3 id="31-affected-products"&gt;3.1 AFFECTED PRODUCTS&lt;/h3&gt;
+&lt;p&gt;The following Schneider Electric products are affected:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Modicon M340 CPU (part numbers BMXP34*): Versions prior to sv3.60 (CVE-2023-6408)&lt;/li&gt;
+&lt;li&gt;Modicon M580 CPU (part numbers BMEP* and BMEH* excluding M580 CPU Safety): Versions prior to SV4.20 (CVE-2023-6408)&lt;/li&gt;
+&lt;li&gt;Modicon M580 CPU Safety: Versions prior to SV4.21 (CVE-2023-6408)&lt;/li&gt;
+&lt;li&gt;EcoStruxure Control Expert: Versions prior to v16.0&lt;/li&gt;
+&lt;li&gt;EcoStruxure Process Expert: Versions prior to v2023&lt;/li&gt;
+&lt;li&gt;Modicon MC80 (part numbers BMKC80): All versions (CVE-2023-6408)&lt;/li&gt;
+&lt;li&gt;Modicon Momentum Unity M1E Processor (171CBU*): All versions (CVE-2023-6408)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="32-vulnerability-overview"&gt;3.2 Vulnerability Overview&lt;/h3&gt;
+&lt;h4 id="321-improper-enforcement-of-message-integrity-during-transmission-in-a-communication-channel-cwe-924"&gt;&lt;strong&gt;3.2.1 &lt;/strong&gt;&lt;a href="https://cwe.mitre.org/data/definitions/924.html" target="_blank"&gt;&lt;strong&gt;IMPROPER ENFORCEMENT OF MESSAGE INTEGRITY DURING TRANSMISSION IN A COMMUNICATION CHANNEL CWE-924&lt;/strong&gt;&lt;/a&gt;&lt;/h4&gt;
+&lt;p&gt;An improper enforcement of message integrity during transmission in a communication channel vulnerability exists that could cause a denial of service, a loss of confidentiality, and threaten the integrity of controllers through a man-in-the-middle attack.&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://www.cve.org/CVERecord?id=CVE-2023-6408" target="_blank"&gt;CVE-2023-6408&lt;/a&gt; has been assigned to this vulnerability. A CVSS v3 base score of 8.1 has been calculated; the CVSS vector string is (&lt;a href="https://www.first.org/cvss/calculator/3.1#CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H" target="_blank"&gt;CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H&lt;/a&gt;).&lt;/p&gt;
+&lt;h4 id="322-use-of-hard-coded-credentials-cwe-798"&gt;&lt;strong&gt;3.2.2 &lt;/strong&gt;&lt;a href="https://cwe.mitre.org/data/definitions/798.html" target="_blank"&gt;&lt;strong&gt;USE OF HARD-CODED CREDENTIALS CWE-798&lt;/strong&gt;&lt;/a&gt;&lt;/h4&gt;
+&lt;p&gt;A use of hard-coded credentials vulnerability exists that could cause unauthorized access to a project file protected with application password when opening the file with EcoStruxure Control Expert.&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://www.cve.org/CVERecord?id=CVE-2023-6409" target="_blank"&gt;CVE-2023-6409&lt;/a&gt; has been assigned to this vulnerability. A CVSS v3 base score of 7.7 has been calculated; the CVSS vector string is (&lt;a href="https://www.first.org/cvss/calculator/3.1#CVSS:3.1/AV:L/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N" target="_blank"&gt;CVSS:3.1/AV:L/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N&lt;/a&gt;).&lt;/p&gt;
+&lt;h4 id="323-insufficiently-protected-credentials-cwe-522"&gt;&lt;strong&gt;3.2.3 &lt;/strong&gt;&lt;a href="https://cwe.mitre.org/data/definitions/522.html" target="_blank"&gt;&lt;strong&gt;INSUFFICIENTLY PROTECTED CREDENTIALS CWE-522&lt;/strong&gt;&lt;/a&gt;&lt;/h4&gt;
+&lt;p&gt;An insufficiently protected credentials vulnerability exists that could cause unauthorized access to the project file in EcoStruxure Control Expert when a local user tampers with the memory of the engineering workstation.&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://www.cve.org/CVERecord?id=CVE-2023-27975" target="_blank"&gt;CVE-2023-27975&lt;/a&gt; has been assigned to this vulnerability. A CVSS v3 base score of 7.1 has been calculated; the CVSS vector string is (&lt;a href="https://www.first.org/cvss/calculator/3.1#CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:N" target="_blank"&gt;CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:N&lt;/a&gt;).&lt;/p&gt;
+&lt;h3 id="33-background"&gt;3.3 BACKGROUND&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;CRITICAL INFRASTRUCTURE SECTORS:&lt;/strong&gt; Critical Manufacturing&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;COUNTRIES/AREAS DEPLOYED:&lt;/strong&gt; Worldwide&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;COMPANY HEADQUARTERS LOCATION:&lt;/strong&gt; France&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="34-researcher"&gt;3.4 RESEARCHER&lt;/h3&gt;
+&lt;p&gt;Gao Jian, Jianshuang Ding, and Kaikai Yang reported these vulnerabilities to Schneider Electric.&lt;/p&gt;
+&lt;h2 id="4-mitigations"&gt;4. MITIGATIONS&lt;/h2&gt;
+&lt;p&gt;Schneider Electric has identified the following remediations and mitigations users can apply to reduce risk:&lt;/p&gt;
+&lt;p&gt;Modicon M340 CPU (part numbers BMXP34*):&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://www.se.com/ww/en/product-range/1468-modicon-m340" target="_blank"&gt;Firmware Version SV3.60&lt;/a&gt; includes a fix for this vulnerability and is available for download.&lt;/li&gt;
+&lt;li&gt;Set up an application password in the project properties.&lt;/li&gt;
+&lt;li&gt;Set up network segmentation and implement a firewall to block all unauthorized access to Port 502/TCP.&lt;/li&gt;
+&lt;li&gt;Configure the access control list following the recommendations of the user manuals: &lt;a href="https://www.se.com/ww/en/download/document/31007131K01000/" target="_blank"&gt;"Modicon M340 for Ethernet Communications Modules and Processors User Manual"&lt;/a&gt; in chapter "Messaging Configuration Parameters":&lt;/li&gt;
+&lt;li&gt;Set up a secure communication according to the following guideline &lt;a href="https://www.se.com/ww/en/download/document/EIO0000001999/" target="_blank"&gt;"Modicon Controllers Platform Cyber Security Reference Manual,"&lt;/a&gt; in chapter "Set up secured communications":&lt;/li&gt;
+&lt;li&gt;Consider use of external firewall devices such as EAGLE40-07 from Belden to establish VPN connections for M340 &amp;amp; M580 architectures. For more details refer to the chapter &lt;a href="https://www.se.com/ww/en/download/document/EIO0000001999/" target="_blank"&gt;"How to protect M580 and M340 architectures with EAGLE40 using VPN"&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Ensure the M340 CPU is running with the memory protection activated by configuring the input bit to a physical input, for more details refer to the following guideline &lt;a href="https://www.se.com/ww/en/download/document/EIO0000001999/" target="_blank"&gt;"Modicon Controllers Platform Cyber Security Reference Manual"&lt;/a&gt;, &lt;a href="https://www.se.com/ww/en/download/document/31007131K01000/" target="_blank"&gt;"CPU Memory Protection section"&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Modicon M580 CPU (part numbers BMEP* and BMEH* excluding M580 CPU Safety):&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://www.se.com/ww/en/product-range/62098-%20modicon-m580-epac/%20-%20software-and-firmware" target="_blank"&gt;Firmware Versions SV4.20&lt;/a&gt; includes a fix for this vulnerability and is available for download.&lt;/li&gt;
+&lt;li&gt;Set up an application password in the project properties&lt;/li&gt;
+&lt;li&gt;Setup network segmentation and implement a firewall to block all unauthorized access to Port 502/TCP.&lt;/li&gt;
+&lt;li&gt;Configure the access control list following the recommendations of the user manuals: &lt;a href="https://www.se.com/ww/en/product-range/62098-%20modicon-m580-epac/%20-%20software-and-firmware" target="_blank"&gt;"Modicon M580, Hardware, Reference Manual"&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Set up a secure communication according to the following guideline &lt;a href="https://www.se.com/ww/en/download/document/EIO0000001999/" target="_blank"&gt;"Modicon Controllers Platform Cyber Security Reference Manual,"&lt;/a&gt; in chapter "Set up secured communications":&lt;/li&gt;
+&lt;li&gt;Use a BMENOC module and follow the instructions to configure IPSEC feature as described in the guideline &lt;a href="https://www.se.com/ww/en/download/document/HRB62665/" target="_blank"&gt;"Modicon M580 - BMENOC03.1 Ethernet Communications Schneider Electric Security Notification Module, Installation and Configuration Guide"&lt;/a&gt; in the chapter "Configuring IPSEC communications":&lt;/li&gt;
+&lt;li&gt;Use a BMENUA0100 module and follow the instructions to configure IPSEC feature as described in the chapter &lt;a href="https://www.se.com/ww/en/download/document/PHA83350" target="_blank"&gt;"Configuring the BMENUA0100 Cybersecurity Settings"&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Consider use of external firewall devices such as EAGLE40-07 from Belden to establish VPN connections for M340 &amp;amp; M580 architectures. For more details refer to the chapter &lt;a href="https://www.se.com/ww/en/download/document/EIO0000001999/" target="_blank"&gt;"How to protect M580 and M340 architectures with EAGLE40 using VPN"&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Ensure the M580 CPU is running with the memory protection activated by configuring the input bit to a physical input, for more details refer to the following guideline &lt;a href="https://www.schneiderelectric.com/en/download/document/EIO0000001999/" target="_blank"&gt;"Modicon Controllers Platform Cyber Security Reference Manual", "CPU Memory Protection section"&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;The CPU memory protection cannot be configured with M580 Hot Standby CPUs. In such cases, use IPsec &lt;a href="https://www.se.com/ww/en/download/document/EIO0000001578/" target="_blank"&gt;encrypted communication&lt;/a&gt; .&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Modicon M580 CPU Safety (part numbers BMEP58&lt;em&gt;S and BMEH58&lt;/em&gt;S):&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://www.se.com/ww/en/product-range/62098-modicon-m580-pac-controller/#software-andfirmware" target="_blank"&gt;Firmware SV4.21&lt;/a&gt; includes a fix for CVE-2023-6408 and is available for download. Important: users needs to use version of &lt;a href="https://www.se.com/ww/en/product-range/548-ecostruxure-control-expert-unity-pro/#software-andfirmware" target="_blank"&gt;EcoStruxure Control Expert v16.0 HF001 minimum&lt;/a&gt; to connect with the latest version of M580 CPU Safety.&lt;/li&gt;
+&lt;li&gt;If users choose not to apply the remediation, they are encouraged to immediately apply the following mitigations to reduce the risk of exploit:&lt;/li&gt;
+&lt;li&gt;Set up an application password in the project properties.&lt;/li&gt;
+&lt;li&gt;Setup network segmentation and implement a firewall to block all unauthorized access to Port 502/TCP.&lt;/li&gt;
+&lt;li&gt;Configure the Access Control List following the recommendations of &lt;a href="https://www.se.com/ww/en/download/document/EIO0000001578/" target="_blank"&gt;"Modicon M580, Hardware, Reference Manual"&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Set up a secure communication according to the following guideline &lt;a href="https://www.se.com/ww/en/download/document/EIO0000001999/" target="_blank"&gt;"Modicon Controllers Platform Cyber Security Reference Manual,"&lt;/a&gt; in chapter "Set up secured communications".&lt;/li&gt;
+&lt;li&gt;Use a BMENOC module and follow the instructions to configure IPSEC feature as described in the guideline "Modicon M580 - BMENOC03.1 Ethernet Communications Schneider Electric Security Notification Module, Installation and Configuration Guide" in the chapter "Configuring IPSEC communications": &lt;a href="https://www.se.com/ww/en/download/document/HRB62665/" target="_blank"&gt;https://www.se.com/ww/en/download/document/HRB62665/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Use a BMENUA0100 module and follow the instructions to configure IPSEC feature as described in the chapter &lt;a href="https://www.se.com/ww/en/download/document/PHA83350" target="_blank"&gt;"Configuring the BMENUA0100 Cybersecurity Settings"&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Consider use of external firewall devices such as EAGLE40-07 from Belden to establish VPN connections for M340 &amp;amp; M580 architectures. For more details refer to the chapter &lt;a href="https://www.se.com/ww/en/download/document/EIO0000001999/" target="_blank"&gt;"How to protect M580 and M340 architectures with EAGLE40 using VPN"&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Ensure the M580 CPU is running with the memory protection activated by configuring the input bit to a physical input, for more details refer to the following guideline &lt;a href="https://www.schneiderelectric.com/en/download/document/EIO0000001999/" target="_blank"&gt;"Modicon Controllers Platform Cyber Security Reference Manual", "CPU Memory Protection section"&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;NOTE: The CPU memory protection cannot be configured with M580 Hot Standby CPUs. In such cases, use IPsec encrypted communication.&lt;/li&gt;
+&lt;li&gt;To further reduce the attack surface on Modicon M580 CPU Safety: Ensure the CPU is running in Safety mode and maintenance input is configured to maintain this Safety mode during operation – refer to the document &lt;a href="https://www.se.com/ww/en/download/document/EIO0000001578/" target="_blank"&gt;Modicon M580 - Safety System Planning Guide&lt;/a&gt; - in the chapter "Operating Mode Transitions".&lt;/li&gt;
+&lt;li&gt;Schneider Electric is establishing a remediation plan for all future versions of EcoStruxure Process Expert that will include a fix for CVE-2023-6409 and CVE-2023-27975. They will update SEVD-2024-317-04 when the remediation is available. Until then, users should immediately apply the above mitigations to reduce the risk of exploit.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Modicon MC80 (part numbers BMKC80):&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Set up an application password in the project properties.&lt;/li&gt;
+&lt;li&gt;Set up network segmentation and implement a firewall to block all unauthorized access to Port 502/TCP.&lt;/li&gt;
+&lt;li&gt;Configure the access control list following the recommendations of &lt;a href="https://usdhs-my.sharepoint.com/personal/grayson_gaylor_associates_cisa_dhs_gov1/_layouts/15/:https://www.se.com/ww/en/download/document/EIO0000002071/Setup" target="_blank"&gt;"Modicon MC80 Programmable Logic Controller (PLC) manual"&lt;/a&gt; in the chapter "Access Control List (ACL)" a secure communication according to &lt;a href="https://www.se.com/ww/en/download/document/EIO0000001999/" target="_blank"&gt;"Modicon Controller Systems Cybersecurity, User Guide"&lt;/a&gt; in chapter "Set Up Encrypted Communication".&lt;/li&gt;
+&lt;li&gt;(CVE-2023-6408) Schneider Electric Modicon Momentum Unity M1E Processor (171CBU*) All versions: Setup an application password in the project properties
+&lt;ul&gt;
+&lt;li&gt;Setup network segmentation and implement a firewall to block all unauthorized access to Port 502/TCP&lt;/li&gt;
+&lt;li&gt;Setup a secure communication according to the following guideline "Modicon Controller Systems Cybersecurity, User Guide" in chapter "Set Up &lt;a href="https://www.se.com/ww/en/download/document/EIO0000001999/" target="_blank"&gt;Encrypted Communication":&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;EcoStruxure Control Expert:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://www.se.com/in/en/product-range/548-ecostruxure-control-expert-unity-pro/" target="_blank"&gt;Version 16.0&lt;/a&gt; includes a fix for these vulnerabilities and is available for download. Reboot the computer after installation is completed.&lt;/li&gt;
+&lt;li&gt;Enable encryption on application project and store application files in secure location with restricted access only for legitimate users.&lt;/li&gt;
+&lt;li&gt;Schneider Electric recommends using McAfee Application and Change Control software for application control. Refer to the &lt;a href="https://www.se.com/ww/en/download/document/EIO0000004778/" target="_blank"&gt;Cybersecurity Application Note&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Follow workstation, network and site-hardening guidelines in the &lt;a href="https://www.se.com/ww/en/download/document/EIO0000004778/" target="_blank"&gt;Recommended Cybersecurity Best Practices&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;EcoStruxure Process Expert:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://www.se.com/ww/en/product-range/548-ecostruxure-control-expert-unity-pro/" target="_blank"&gt;Version 15.3 HF008&lt;/a&gt; includes the fix for these vulnerabilities and is available for download.&lt;/li&gt;
+&lt;li&gt;EcoStruxure Process Expert manages application files within its database in secure way. Do not export &amp;amp; store them outside the application.&lt;/li&gt;
+&lt;li&gt;Schneider Electric recommends using McAfee Application and Change Control software for application control. Refer to the &lt;a href="https://www.se.com/ww/en/download/document/EIO0000004778/" target="_blank"&gt;Cybersecurity Application Note&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Follow workstation, network and site-hardening guidelines in the &lt;a href="https://www.se.com/ww/en/download/document/EIO0000004778/" target="_blank"&gt;Recommended Cybersecurity Best Practices&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;For more information refer to the &lt;a href="https://www.se.com/us/en/download/document/7EN52-0390/" target="_blank"&gt;Schneider Electric Recommended Cybersecurity Best Practices&lt;/a&gt; and the associated Schneider Electric Security Notification SEVD-2024-044-01 in &lt;a href="https://download.schneider-electric.com/files?p_Doc_Ref=SEVD-2024-044-01&amp;amp;p_enDocType=Security+and+Safety+Notice&amp;amp;p_File_Name=SEVD-2024-044-01.pdf" target="_blank"&gt;PDF&lt;/a&gt; and &lt;a href="https://download.schneider-electric.com/files?p_Doc_Ref=SEVD-2024-044-01&amp;amp;p_enDocType=Security+and+Safety+Notice&amp;amp;p_File_Name=SEVD-2024-044-01.json" target="_blank"&gt;CSAF.&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;CISA recommends users take defensive measures to minimize the risk of exploitation of these vulnerabilities. CISA reminds organizations to perform proper impact analysis and risk assessment prior to deploying defensive measures.&lt;/p&gt;
+&lt;p&gt;CISA also provides a section for &lt;a href="https://www.cisa.gov/resources-tools/resources/ics-recommended-practices" target="_blank"&gt;control systems security recommended practices&lt;/a&gt; on the ICS webpage on &lt;a href="https://www.cisa.gov/topics/industrial-control-systems" target="_blank"&gt;cisa.gov&lt;/a&gt;. Several CISA products detailing cyber defense best practices are available for reading and download, including &lt;a href="https://us-cert.cisa.gov/sites/default/files/recommended_practices/NCCIC_ICS-CERT_Defense_in_Depth_2016_S508C.pdf" target="_blank"&gt;Improving Industrial Control Systems Cybersecurity with Defense-in-Depth Strategies&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;CISA encourages organizations to implement recommended cybersecurity strategies for &lt;a href="https://www.cisa.gov/sites/default/files/publications/Cybersecurity_Best_Practices_for_Industrial_Control_Systems.pdf" target="_blank"&gt;proactive defense of ICS assets&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Additional mitigation guidance and recommended practices are publicly available on the ICS webpage at &lt;a href="https://www.cisa.gov/topics/industrial-control-systems" target="_blank"&gt;cisa.gov&lt;/a&gt; in the technical information paper, &lt;a href="https://www.cisa.gov/uscert/ics/tips/ICS-TIP-12-146-01B" target="_blank"&gt;ICS-TIP-12-146-01B--Targeted Cyber Intrusion Detection and Mitigation Strategies&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Organizations observing suspected malicious activity should follow established internal procedures and report findings to CISA for tracking and correlation against other incidents.&lt;/p&gt;
+&lt;p&gt;No known public exploitation specifically targeting these vulnerabilities has been reported to CISA at this time. These vulnerabilities have a high attack complexity.&lt;/p&gt;
+&lt;h2 id="5-update-history"&gt;5. UPDATE HISTORY&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;November 26, 2024: Initial Publication&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+  <pubDate>Tue, 26 Nov 24 12:00:00 +0000</pubDate>
+    <dc:creator>CISA</dc:creator>
+    <guid isPermaLink="false">/node/22626</guid>
+    </item>
+<item>
+  <title>Schneider Electric PowerLogic PM55xx and PowerLogic PM8ECC</title>
+  <link>https://www.cisa.gov/news-events/ics-advisories/icsa-24-331-01</link>
+  <description>&lt;p&gt;&lt;a href="https://github.com/cisagov/CSAF" target="_blank"&gt;&lt;strong&gt;View CSAF&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id="1-executive-summary"&gt;1. EXECUTIVE SUMMARY&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;CVSS v4 9.5&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;ATTENTION&lt;/strong&gt;: Exploitable remotely/low attack complexity&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Vendor&lt;/strong&gt;: Schneider Electric&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Equipment&lt;/strong&gt;: PowerLogic PM5500 and PowerLogic PM8ECC&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Vulnerabilities&lt;/strong&gt;: Weak Password Recovery Mechanism for Forgotten Password, Improper Authentication&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="2-risk-evaluation"&gt;2. RISK EVALUATION&lt;/h2&gt;
+&lt;p&gt;Successful exploitation of these vulnerabilities could result in an attacker gaining escalated privileges and obtaining control of the device.&lt;/p&gt;
+&lt;h2 id="3-technical-details"&gt;3. TECHNICAL DETAILS&lt;/h2&gt;
+&lt;h3 id="31-affected-products"&gt;3.1 AFFECTED PRODUCTS&lt;/h3&gt;
+&lt;p&gt;The following versions of PowerLogic PM55xx power metering devices and PowerLogic PM8ECC ethernet communication module are affected:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;PM5560: Versions prior to v2.7.8&lt;/li&gt;
+&lt;li&gt;PM5561: Versions prior to v10.7.3&lt;/li&gt;
+&lt;li&gt;PM5562: v2.5.4 and prior&lt;/li&gt;
+&lt;li&gt;PM5563: Versions prior to v2.7.8&lt;/li&gt;
+&lt;li&gt;PM8ECC: All versions&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="32-vulnerability-overview"&gt;3.2 Vulnerability Overview&lt;/h3&gt;
+&lt;h4 id="321-weak-password-recovery-mechanism-for-forgotten-password-cwe-640"&gt;&lt;strong&gt;3.2.1 &lt;/strong&gt;&lt;a href="https://cwe.mitre.org/data/definitions/640.html" target="_blank"&gt;&lt;strong&gt;WEAK PASSWORD RECOVERY MECHANISM FOR FORGOTTEN PASSWORD CWE-640&lt;/strong&gt;&lt;/a&gt;&lt;/h4&gt;
+&lt;p&gt;The affected product is vulnerable due to weak password recovery mechanisms, which may allow an attacker to gain unauthorized access and potentially deny service to legitimate system users.&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://www.cve.org/CVERecord?id=CVE-2021-22763" target="_blank"&gt;CVE-2021-22763&lt;/a&gt; has been assigned to this vulnerability. A CVSS v3.1 base score of 8.1 has been calculated; the CVSS vector string is (&lt;a href="https://www.first.org/cvss/calculator/3.1#CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H" target="_blank"&gt;CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H&lt;/a&gt;).&lt;/p&gt;
+&lt;p&gt;A CVSS v4 score has also been calculated for &lt;a href="https://www.cve.org/CVERecord?id=CVE-2021-22763" target="_blank"&gt;CVE-2021-22763&lt;/a&gt;. A base score of 9.5 has been calculated; the CVSS vector string is (&lt;a href="https://www.first.org/cvss/calculator/4.0#CVSS:4.0/AV:N/AC:H/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H" target="_blank"&gt;CVSS:4.0/AV:N/AC:H/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H&lt;/a&gt;).&lt;/p&gt;
+&lt;h4 id="322-improper-authentication-cwe-287"&gt;&lt;strong&gt;3.2.2 &lt;/strong&gt;&lt;a href="https://cwe.mitre.org/data/definitions/287.html" target="_blank"&gt;&lt;strong&gt;IMPROPER AUTHENTICATION CWE-287&lt;/strong&gt;&lt;/a&gt;&lt;/h4&gt;
+&lt;p&gt;The affected product is vulnerable due to improper authentication, which may provide an attacker with sensitive information or allow an attacker to remotely execute arbitrary code.&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://www.cve.org/CVERecord?id=CVE-2021-22764" target="_blank"&gt;CVE-2021-22764&lt;/a&gt; has been assigned to this vulnerability. A CVSS v3.1 base score of 5.3 has been calculated; the CVSS vector string is (&lt;a href="https://www.first.org/cvss/calculator/3.1#CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L" target="_blank"&gt;CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L&lt;/a&gt;).&lt;/p&gt;
+&lt;p&gt;A CVSS v4 score has also been calculated for &lt;a href="https://www.cve.org/CVERecord?id=CVE-2021-22764" target="_blank"&gt;CVE-2021-22764&lt;/a&gt;. A base score of 6.9 has been calculated; the CVSS vector string is (&lt;a href="https://www.first.org/cvss/calculator/4.0#CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:L/SC:N/SI:N/SA:N" target="_blank"&gt;CVSS4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:L/SC:N/SI:N/SA:N&lt;/a&gt;).&lt;/p&gt;
+&lt;h3 id="33-background"&gt;3.3 BACKGROUND&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;CRITICAL INFRASTRUCTURE SECTORS:&lt;/strong&gt; Energy&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;COUNTRIES/AREAS DEPLOYED:&lt;/strong&gt; Multiple&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;COMPANY HEADQUARTERS LOCATION:&lt;/strong&gt; France&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="34-researcher"&gt;3.4 RESEARCHER&lt;/h3&gt;
+&lt;p&gt;Jacob Baines of Dragos reported these vulnerabilities to CISA.&lt;/p&gt;
+&lt;h2 id="4-mitigations"&gt;4. MITIGATIONS&lt;/h2&gt;
+&lt;p&gt;Schneider has provided the following remediations:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Users should consider blocking HTTP access to the device at the firewall level or disable the HTTP web service to reduce the risk of exposure.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://www.se.com/ww/en/product-range/61281-powerlogic-pm5000-power-meters/?parent-subcategory-id=4125&amp;amp;filter=business-2-building-automation-and-control#software-and-firmware" target="_blank"&gt;Version 2.8.3 of the PowerLogic PM5560, 5563, 5580 firmware&lt;/a&gt; includes fixes for these vulnerabilities.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://www.se.com/ww/en/product-range/61281-powerlogic-pm5000-power-meters/?parent-subcategory-id=4125&amp;amp;filter=business-2-building-automation-and-control#software-and-firmware" target="_blank"&gt;Version 10.7.3 of the PowerLogic PM5561 firmware&lt;/a&gt; includes fixes for these vulnerabilities.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://www.se.com/ww/en/product-range/61281-powerlogic-pm5000/12146169702-basic-multifunction-metering/?selected-node-id=12146169702&amp;amp;N=brand%3Dse%26country-code%3DUK%26language-code%3Den%26node-id%3D12146169702#software-and-firmware" target="_blank"&gt;Version 4.3.5 of the PowerLogic PM5562 firmware&lt;/a&gt;. includes fixes for these vulnerabilities.&lt;/li&gt;
+&lt;li&gt;PowerLogic PM8ECC has reached end of service and is no longer supported.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Schneider Electric recommends the following industry cybersecurity best practices:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Locate control and safety system networks and remote devices behind firewalls and isolate them from the business network.&lt;/li&gt;
+&lt;li&gt;Install physical controls so no unauthorized personnel can access your industrial control and safety systems, components, peripheral equipment, and networks.&lt;/li&gt;
+&lt;li&gt;Place all controllers in locked cabinets and never leave them in the "Program" mode.&lt;/li&gt;
+&lt;li&gt;Never connect programming software to any network other than the network intended for that device.&lt;/li&gt;
+&lt;li&gt;Scan all methods of mobile data exchange with the isolated network such as CDs, USB drives, etc. before use in the terminals or any node connected to these networks.&lt;/li&gt;
+&lt;li&gt;Never allow mobile devices that have connected to any other network besides the intended network to connect to the safety or control networks without proper sanitation.&lt;/li&gt;
+&lt;li&gt;Minimize network exposure for all control system devices and systems and ensure that they are not accessible from the Internet.&lt;/li&gt;
+&lt;li&gt;When remote access is required, use secure methods, such as virtual private networks (VPNs). Recognize that VPNs may have vulnerabilities and should be updated to the most current version&lt;br&gt;available. Also, understand that VPNs are only as secure as the connected devices.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;For more information refer to the &lt;a href="https://www.se.com/us/en/download/document/7EN52-0390/" target="_blank"&gt;Schneider Electric Recommended Cybersecurity Best Practices document&lt;/a&gt; and the associated Schneider Electric Security Notification SEVD-2021-159-02 in &lt;a href="https://download.schneider-electric.com/doc/SEVD-2021-159-02/SEVD-2021-159-02.pdf" target="_blank"&gt;PDF&lt;/a&gt; and &lt;a href="https://download.schneider-electric.com/files?p_Doc_Ref=SEVD-2021-159-02&amp;amp;p_enDocType=Security+and+Safety+Notice&amp;amp;p_File_Name=SEVD-2021-159-02.json" target="_blank"&gt;CSAF.&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;CISA recommends users take defensive measures to minimize the risk of exploitation of these vulnerabilities. CISA reminds organizations to perform proper impact analysis and risk assessment prior to deploying defensive measures.&lt;/p&gt;
+&lt;p&gt;CISA also provides a section for &lt;a href="https://www.cisa.gov/resources-tools/resources/ics-recommended-practices" target="_blank"&gt;control systems security recommended practices&lt;/a&gt; on the ICS webpage on &lt;a href="https://www.cisa.gov/topics/industrial-control-systems" target="_blank"&gt;cisa.gov/ics&lt;/a&gt;. Several CISA products detailing cyber defense best practices are available for reading and download, including &lt;a href="https://us-cert.cisa.gov/sites/default/files/recommended_practices/NCCIC_ICS-CERT_Defense_in_Depth_2016_S508C.pdf" target="_blank"&gt;Improving Industrial Control Systems Cybersecurity with Defense-in-Depth Strategies&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;CISA encourages organizations to implement recommended cybersecurity strategies for &lt;a href="https://www.cisa.gov/sites/default/files/publications/Cybersecurity_Best_Practices_for_Industrial_Control_Systems.pdf" target="_blank"&gt;proactive defense of ICS assets&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Additional mitigation guidance and recommended practices are publicly available on the ICS webpage at &lt;a href="https://www.cisa.gov/topics/industrial-control-systems" target="_blank"&gt;cisa.gov/ics&lt;/a&gt; in the technical information paper, &lt;a href="https://www.cisa.gov/uscert/ics/tips/ICS-TIP-12-146-01B" target="_blank"&gt;ICS-TIP-12-146-01B--Targeted Cyber Intrusion Detection and Mitigation Strategies&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Organizations observing suspected malicious activity should follow established internal procedures and report findings to CISA for tracking and correlation against other incidents.&lt;/p&gt;
+&lt;p&gt;No known public exploitation specifically targeting these vulnerabilities has been reported to CISA at this time.&lt;/p&gt;
+&lt;h2 id="5-update-history"&gt;5. UPDATE HISTORY&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;November 26, 2024: Initial Publication&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+  <pubDate>Tue, 26 Nov 24 12:00:00 +0000</pubDate>
+    <dc:creator>CISA</dc:creator>
+    <guid isPermaLink="false">/node/22624</guid>
+    </item>
+    </channel>
+</rss>
