@@ -32,6 +32,7 @@ probes on 2026-11-13 (Asia/Hong_Kong) observed:
 Neither status is treated as the only observed failure. The allowlist entry is
 unchanged; this crate does not guess a replacement URL. Several historical
 `/feeds/` URLs and the old hub path also 404'd; no substitute is recorded here.
+The desk reads this as `IngestionSource.known_not_serving_rss` (catalog mark, not README-only).
 
 Green ingest tests prove the offline parser and checked-in fixtures. They do
 not prove desk sources (including FORCE SYNC) are healthy.
