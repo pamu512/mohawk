@@ -33,6 +33,10 @@ pub struct IngestionSource {
     pub label: String,
     pub url: String,
     pub desk_category: String,
+    /// Static catalog annotation: this allowlisted URL is known not to serve RSS.
+    /// Not last-fetch telemetry and not a live health status.
+    /// `false` does not mean the feed is confirmed live.
+    pub known_not_serving_rss: bool,
 }
 
 struct IngestionSourceDef {
@@ -40,6 +44,7 @@ struct IngestionSourceDef {
     label: &'static str,
     url: &'static str,
     desk_category: &'static str,
+    known_not_serving_rss: bool,
 }
 
 const INGESTION_SOURCE_DEFS: &[IngestionSourceDef] = &[
@@ -48,30 +53,36 @@ const INGESTION_SOURCE_DEFS: &[IngestionSourceDef] = &[
         label: "CISA Alert Feeds",
         url: "https://www.cisa.gov/cybersecurity-advisories/all.xml",
         desk_category: "regulatory",
+        known_not_serving_rss: false,
     },
     IngestionSourceDef {
         id: "cfpb_briefings",
         label: "CFPB Newsroom",
         url: "https://www.consumerfinance.gov/about-us/newsroom/feed/",
         desk_category: "regulatory",
+        known_not_serving_rss: false,
     },
     IngestionSourceDef {
         id: "krebs_security",
         label: "Security Logs",
         url: "https://krebsonsecurity.com/feed/",
         desk_category: "threat_intel",
+        known_not_serving_rss: false,
     },
     IngestionSourceDef {
         id: "bleepingcomputer",
         label: "Security Logs",
         url: "https://www.bleepingcomputer.com/feed/",
         desk_category: "threat_intel",
+        known_not_serving_rss: false,
     },
     IngestionSourceDef {
         id: "ftc_consumer",
         label: "Consumer Safety Briefings",
         url: "https://www.ftc.gov/feeds/press-release-consumer-safety/rss.xml",
         desk_category: "regulatory",
+        // Static catalog note (2026-11-13 and 2026-11-20 probes): not last-fetch telemetry.
+        known_not_serving_rss: true,
     },
 ];
 
@@ -87,6 +98,7 @@ pub fn ingestion_sources() -> Vec<IngestionSource> {
             label: s.label.to_string(),
             url: s.url.to_string(),
             desk_category: s.desk_category.to_string(),
+            known_not_serving_rss: s.known_not_serving_rss,
         })
         .collect()
 }
@@ -447,6 +459,36 @@ mod tests {
         assert!(validate_feed_url("http://evil.com/feed").is_err());
         assert!(validate_feed_url("https://evil.com/feed").is_err());
         assert!(validate_feed_url(INGESTION_SOURCE_DEFS[0].url).is_ok());
+    }
+
+    #[test]
+    fn ingestion_sources_marks_only_ftc_consumer_as_known_not_serving_rss() {
+        let sources = ingestion_sources();
+        assert_eq!(sources.len(), 5);
+
+        let ftc = sources
+            .iter()
+            .find(|s| s.id == "ftc_consumer")
+            .expect("ftc_consumer stays on the catalog");
+        assert!(
+            ftc.known_not_serving_rss,
+            "ftc_consumer is a static known-not-serving catalog mark, not last-fetch telemetry"
+        );
+        assert_eq!(
+            ftc.url,
+            "https://www.ftc.gov/feeds/press-release-consumer-safety/rss.xml"
+        );
+        assert_eq!(ftc.label, "Consumer Safety Briefings");
+
+        let unmarked: Vec<_> = sources.iter().filter(|s| s.id != "ftc_consumer").collect();
+        assert_eq!(unmarked.len(), 4);
+        for source in unmarked {
+            assert!(
+                !source.known_not_serving_rss,
+                "{} must stay unmarked; unmarked does not mean confirmed live",
+                source.id
+            );
+        }
     }
 
     #[test]

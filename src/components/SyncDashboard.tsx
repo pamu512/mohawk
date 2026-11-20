@@ -17,6 +17,7 @@ import {
   TAURI_IPC_ERROR,
 } from '../services/api';
 import { formatCountdown } from '../lib/formatCountdown';
+import { ingestionSourceDeskPresentation } from '../lib/ingestionSourceDesk';
 
 const STATUS_REFRESH_MS = 30_000;
 
@@ -471,23 +472,29 @@ export const SyncDashboard: FC = () => {
               // INGESTION SOURCES
             </div>
             <ul className="space-y-2 overflow-y-auto">
-              {(status?.sources ?? []).map((source) => (
-                <li
-                  key={source.id}
-                  className="flex items-start gap-3 rounded border border-slate-800 bg-slate-950/60 px-3 py-2.5"
-                >
-                  <span
-                    className={`mt-0.5 h-2 w-2 shrink-0 rounded-full ${
-                      inProgress ? 'animate-pulse bg-cyan-400' : 'bg-emerald-500'
-                    }`}
-                    aria-hidden
-                  />
-                  <div className="min-w-0 flex-1">
-                    <div className="text-xs font-bold text-slate-200">{source.label}</div>
-                    <div className="truncate text-[10px] text-slate-600">{source.url}</div>
-                  </div>
-                </li>
-              ))}
+              {(status?.sources ?? []).map((source) => {
+                const desk = ingestionSourceDeskPresentation(source, inProgress);
+                return (
+                  <li
+                    key={source.id}
+                    className="flex items-start gap-3 rounded border border-slate-800 bg-slate-950/60 px-3 py-2.5"
+                  >
+                    <span
+                      className={`mt-0.5 h-2 w-2 shrink-0 rounded-full ${desk.dotClass}`}
+                      aria-hidden
+                    />
+                    <div className="min-w-0 flex-1">
+                      <div className="text-xs font-bold text-slate-200">{source.label}</div>
+                      <div className="truncate text-[10px] text-slate-600">{source.url}</div>
+                      {desk.note && (
+                        <p className="mt-1 text-[10px] leading-relaxed text-amber-400/90">
+                          {desk.note}
+                        </p>
+                      )}
+                    </div>
+                  </li>
+                );
+              })}
               {!status?.sources.length && (
                 <li className="text-[11px] text-slate-600">Loading source matrix...</li>
               )}

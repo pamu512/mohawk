@@ -114,6 +114,8 @@ export interface IngestionSource {
   label: string;
   url: string;
   desk_category: string;
+  /** Static catalog mark from mohawk-ingest. Not a live health check. */
+  known_not_serving_rss: boolean;
 }
 
 export interface SyncLogLine {
